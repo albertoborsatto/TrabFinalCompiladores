@@ -45,8 +45,9 @@ comment     "//".*"\n"
 {identifier}    {return TK_IDENTIFICADOR;}
 {litInt}        {return TK_LIT_INT;}
 {litFloat}      {return TK_LIT_FLOAT;}
-{comment}       {}
+{comment}       {line_number++;}
 \n              {line_number++;}
+.               {return TK_ERRO;}
 
 %%
 
