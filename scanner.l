@@ -10,7 +10,7 @@ int line_number = 1;
 litInt      [0-9]+
 litFloat    [0-9]*\.[0-9]+
 identifier  [a-z_][a-zA-Z0-9_]*
-
+comment     "//".*"\n"
 
 %%
 
@@ -41,11 +41,11 @@ identifier  [a-z_][a-zA-Z0-9_]*
 ")"             {return ')';}
 "{"             {return '{';}
 "}"             {return '}';}
-" "             {" ";}
-"//"            {"";}
+" "             {}
 {identifier}    {return TK_IDENTIFICADOR;}
 {litInt}        {return TK_LIT_INT;}
 {litFloat}      {return TK_LIT_FLOAT;}
+{comment}       {}
 \n              {line_number++;}
 
 %%
