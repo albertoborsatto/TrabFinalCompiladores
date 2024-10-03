@@ -7,7 +7,10 @@ int line_number = 1;
 %}
 
 %option noyywrap
-identifier ^[a-z_][a-zA-Z0-9_]*
+litInt      [0-9]+
+litFloat    [0-9]*\.[0-9]+
+identifier  [a-z_][a-zA-Z0-9_]*
+
 
 %%
 
@@ -36,10 +39,13 @@ identifier ^[a-z_][a-zA-Z0-9_]*
 ";"             {return ';';}
 "("             {return '(';}
 ")"             {return ')';}
-"{"       {     return '{';}
+"{"             {return '{';}
 "}"             {return '}';}
-" "             {" ";}         
+" "             {" ";}
+"//"            {"";}
 {identifier}    {return TK_IDENTIFICADOR;}
+{litInt}        {return TK_LIT_INT;}
+{litFloat}      {return TK_LIT_FLOAT;}
 \n              {line_number++;}
 
 %%
