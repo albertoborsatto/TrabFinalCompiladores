@@ -7,18 +7,40 @@ int line_number = 1;
 %}
 
 %option noyywrap
+identifier ^[a-z_][a-zA-Z0-9_]*
 
 %%
 
-"int"     {return TK_PR_INT;}
-"float"   {return TK_PR_FLOAT;}
-"if"      {return TK_PR_IF;}
-"else"    {return TK_PR_ELSE;}
-"while"   {return TK_PR_WHILE;}
-"return"  {return TK_PR_RETURN;}
-"&"       {return TK_OC_AND;}
-"|"       {return TK_OC_OR;}
-"\n"      {line_number++;}
+"int"           {return TK_PR_INT;}
+"float"         {return TK_PR_FLOAT;}
+"if"            {return TK_PR_IF;}
+"else"          {return TK_PR_ELSE;}
+"while"         {return TK_PR_WHILE;}
+"return"        {return TK_PR_RETURN;}
+"&"             {return TK_OC_AND;}
+"|"             {return TK_OC_OR;}
+"<="            {return TK_OC_LE;}
+">="            {return TK_OC_GE;}
+"=="            {return TK_OC_EQ;}
+"!="            {return TK_OC_NE;}
+"="             {return '=';}
+"!"             {return '!';}
+"*"             {return '*';}
+"/"             {return '/';}
+"%"             {return '%';}
+"+"             {return '+';}
+"-"             {return '-';}
+"<"             {return '<';}
+">"             {return '>';}
+","             {return ',';}
+";"             {return ';';}
+"("             {return '(';}
+")"             {return ')';}
+"{"       {     return '{';}
+"}"             {return '}';}
+" "             {" ";}         
+{identifier}    {return TK_IDENTIFICADOR;}
+\n              {line_number++;}
 
 %%
 
