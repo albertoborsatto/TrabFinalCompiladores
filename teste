@@ -1,0 +1,45 @@
+int sacoletinha = 0; // ascmasocaois
+// Variáveis e tipos primitivos
+int x = 123;
+float y = 45.67;
+int a = 0;
+float b = .123;
+float c = 123.0;
+
+// Operadores aritméticos
+x = x + y - a * b / c;
+
+// Condições e comparações
+if (x > 10)
+{
+    x = x + 1;
+}
+else
+{
+    x = x - 1;
+}
+
+if (y >= 10.5)
+{
+    y = y * 2;
+}
+
+while (x <= y)
+{
+    x = x + 1;
+}
+
+// Comentários em diferentes linhas
+// Este é um comentário
+// E este também
+
+return x; // Retorna o valor de x
+
+// Testando operadores lógicos e comparações
+if (x == 100 && y != 50.5 || a > b)
+{
+    return a;
+}
+
+// Testando caracteres não reconhecidos
+@ #$ ^
