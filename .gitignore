@@ -5,5 +5,7 @@
 
 lex.yy.c
 
+etapa1
+
 Makefile
 scanner.l
