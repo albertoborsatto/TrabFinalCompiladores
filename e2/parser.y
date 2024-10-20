@@ -25,22 +25,42 @@ void yyerror (char const *mensagem);
 %%
 
 programa: lista_de_funcoes | /* vazio */ ;
-
 lista_de_funcoes: lista_de_funcoes funcao | funcao;
 
-funcao: cabecalho corpo;
+funcao: cabecalho_funcao corpo_funcao;
 
-cabecalho: nome_funcao '=' lista_params '>' tipo | nome_funcao '=' '>' tipo;
+cabecalho_funcao: nome_funcao '=' lista_params '>' tipo | nome_funcao '=' '>' tipo;
 
 nome_funcao: TK_IDENTIFICADOR;
 
-lista_params: lista_params param TK_OC_OR | param;
+lista_params: lista_params TK_OC_OR param | param;
 
 param: TK_IDENTIFICADOR '<''-' tipo;
 
-corpo:;
+corpo_funcao: '{' bloco_comando '}' | '{' '}';
+
+bloco_comando: bloco_comando comando | comando;
+
+comando: variavel ';' | atribuicao ';' | chamada_funcao ';' | retorno ';' | controle_fluxo ';' | corpo_funcao ';';
+
+variavel: tipo lista_identificadores;
+lista_identificadores: TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificadores  | TK_IDENTIFICADOR TK_OC_LE literal | TK_IDENTIFICADOR ',' lista_identificadores | TK_IDENTIFICADOR;
+
+atribuicao: TK_IDENTIFICADOR '=' expressao;
+
+chamada_funcao: nome_da_funcao '(' argumentos ')' | nome_da_funcao '(' ')';
+argumentos: argumento ',' argumentos | argumento;
+argumento: TK_LIT_FLOAT | TK_LIT_INT | expressao;
+
+retorno: TK_PR_RETURN expressao;
+
+controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao | TK_PR_WHILE '(' expressao ')' corpo_funcao;
+
+expressao:;
+operando: TK_IDENTIFICADOR | literal | chamada_funcao;
 
 tipo: TK_PR_INT | TK_PR_FLOAT;
+literal; TK_LIT_INT | TK_LIT_FLOAT;
 
 %%
 
