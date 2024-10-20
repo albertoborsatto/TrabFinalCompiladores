@@ -24,8 +24,23 @@ void yyerror (char const *mensagem);
 
 %%
 
-programa: funcao |;
-funcao: TK_PR_INT;
+programa: lista_de_funcoes | /* vazio */ ;
+
+lista_de_funcoes: lista_de_funcoes funcao | funcao;
+
+funcao: cabecalho corpo;
+
+cabecalho: nome_funcao '=' lista_params '>' tipo | nome_funcao '=' '>' tipo;
+
+nome_funcao: TK_IDENTIFICADOR;
+
+lista_params: lista_params param TK_OC_OR | param;
+
+param: TK_IDENTIFICADOR '<''-' tipo;
+
+corpo:;
+
+tipo: TK_PR_INT | TK_PR_FLOAT;
 
 %%
 

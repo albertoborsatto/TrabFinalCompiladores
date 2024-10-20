@@ -8,7 +8,7 @@ scanner: scanner.l
 	gcc -c lex.yy.c 
 	
 bison: parser.y
-	bison -d parser.y 
+	bison -d parser.y
 	gcc -c parser.tab.c 
 
 build: bison scanner main  
