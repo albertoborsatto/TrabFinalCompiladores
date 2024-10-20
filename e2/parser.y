@@ -1,10 +1,10 @@
 %{ 
 #include <stdio.h>
-#define YYERROR_VERBOSE 1 
 int yylex(void);
 void yyerror (char const *mensagem);
 %}
 
+%define parse.error verbose
 %token TK_PR_INT
 %token TK_PR_FLOAT
 %token TK_PR_IF
@@ -24,10 +24,7 @@ void yyerror (char const *mensagem);
 
 %%
 
-programa: lista_de_funcoes | /* vazio */ ;
-
-lista_de_funcoes: lista_de_funcoes funcao | funcao;
-
+programa: funcao |;
 funcao: TK_PR_INT;
 
 %%

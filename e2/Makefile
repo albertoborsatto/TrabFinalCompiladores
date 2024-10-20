@@ -1,12 +1,15 @@
-etapa2: lex.yy.o parser.tab.o lex.yy.c
-	gcc -o etapa2 lex.yy.o parser.tab.o -lfl
+all: build
 
-lex.yy.o: lex.yy.c parser.tab.o
-	gcc -c lex.yy.c
-	gcc -c parser.tab.c
+main: main.c
+	gcc main.c -c
 
-lex.yy.c: scanner.l
+scanner: scanner.l
 	flex scanner.l
+	gcc -c lex.yy.c 
+	
+bison: parser.y
+	bison -d parser.y 
+	gcc -c parser.tab.c 
 
-parser.tab.o: parser.y
-	bison -d parser.y
+build: bison scanner main  
+	gcc lex.yy.o parser.tab.o main.o -o etapa2
