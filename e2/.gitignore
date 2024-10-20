@@ -10,4 +10,3 @@ parser.tab.c
 etapa2
 
 #Makefile
-scanner.l
