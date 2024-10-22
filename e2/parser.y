@@ -49,6 +49,7 @@ lista_identificadores: TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificador
 atribuicao: TK_IDENTIFICADOR '=' expressao;
 
 chamada_funcao: nome_da_funcao '(' argumentos ')' | nome_da_funcao '(' ')';
+nome_da_funcao: TK_IDENTIFICADOR;
 argumentos: argumento ',' argumentos | argumento;
 argumento: TK_LIT_FLOAT | TK_LIT_INT | expressao;
 
@@ -87,14 +88,12 @@ operando: '(' expressao ')'
         | literal 
         | chamada_funcao;
 
-14 > 12 < 10
-
 tipo: TK_PR_INT | TK_PR_FLOAT;
-literal; TK_LIT_INT | TK_LIT_FLOAT;
+literal: TK_LIT_INT | TK_LIT_FLOAT;
 
 %%
 
 void yyerror (char const *mensagem)
 {
-    fprintf(stderr, "%s\n", mensagem);
+    fprintf(stderr, "%s - line %d\n", mensagem, get_line_number());
 }
