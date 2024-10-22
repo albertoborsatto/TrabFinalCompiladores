@@ -48,8 +48,7 @@ lista_identificadores: TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificador
 
 atribuicao: TK_IDENTIFICADOR '=' expressao;
 
-chamada_funcao: nome_da_funcao '(' argumentos ')' | nome_da_funcao '(' ')';
-nome_da_funcao: TK_IDENTIFICADOR;
+chamada_funcao: nome_funcao '(' argumentos ')' | nome_funcao '(' ')';
 argumentos: argumento ',' argumentos | argumento;
 argumento: TK_LIT_FLOAT | TK_LIT_INT | expressao;
 
@@ -65,11 +64,6 @@ expressao: expressao TK_OC_OR operadores
         | expressao TK_OC_LE operadores
         | expressao '>' operadores
         | expressao '<' operadores
-        | expressao '-' operadores
-        | expressao '+' operadores
-        | expressao '%' operadores
-        | expressao '/' operadores
-        | expressao '*' operadores
         | operadores;
 
 operadores: operadores '-' unario
@@ -79,8 +73,8 @@ operadores: operadores '-' unario
         | operadores '*' unario
         | unario;
 
-unario: '!' operando
-        | '-' operando
+unario: '!' unario
+        | '-' unario
         | operando;
 
 operando: '(' expressao ')'
