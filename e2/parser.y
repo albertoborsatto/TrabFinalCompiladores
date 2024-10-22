@@ -56,8 +56,38 @@ retorno: TK_PR_RETURN expressao;
 
 controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao | TK_PR_WHILE '(' expressao ')' corpo_funcao;
 
-expressao:;
-operando: TK_IDENTIFICADOR | literal | chamada_funcao;
+expressao: expressao TK_OC_OR operadores 
+        | expressao TK_OC_AND operadores
+        | expressao TK_OC_NE operadores
+        | expressao TK_OC_EQ operadores
+        | expressao TK_OC_GE operadores
+        | expressao TK_OC_LE operadores
+        | expressao '>' operadores
+        | expressao '<' operadores
+        | expressao '-' operadores
+        | expressao '+' operadores
+        | expressao '%' operadores
+        | expressao '/' operadores
+        | expressao '*' operadores
+        | operadores;
+
+operadores: operadores '-' unario
+        | operadores '+' unario
+        | operadores '%' unario
+        | operadores '/' unario
+        | operadores '*' unario
+        | unario;
+
+unario: '!' operando
+        | '-' operando
+        | operando;
+
+operando: '(' expressao ')'
+        | TK_IDENTIFICADOR 
+        | literal 
+        | chamada_funcao;
+
+14 > 12 < 10
 
 tipo: TK_PR_INT | TK_PR_FLOAT;
 literal; TK_LIT_INT | TK_LIT_FLOAT;
