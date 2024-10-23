@@ -1,4 +1,4 @@
-%{
+%{ 
 #include <stdio.h>
 int yylex(void);
 void yyerror (char const *mensagem);
@@ -48,12 +48,7 @@ nome_funcao: TK_IDENTIFICADOR
 corpo_funcao: '{' bloco_comando '}' | '{' '}';
 bloco_comando: bloco_comando comando | comando;
 
-comando: variavel ';' 
-       | atribuicao ';' 
-       | chamada_funcao ';' 
-       | retorno ';' 
-       | controle_fluxo ';' 
-       | corpo_funcao;
+comando: variavel ';' | atribuicao ';' | chamada_funcao ';' | retorno ';' | controle_fluxo ';' | corpo_funcao ';';
 
 variavel: tipo lista_identificadores;
 lista_identificadores: TK_IDENTIFICADOR | 
