@@ -66,18 +66,16 @@ expressao: expressao TK_OC_OR operadores
         | expressao '<' operadores
         | operadores;
 
-operadores: operadores '-' unario
-        | operadores '+' unario
-        | operadores '%' unario
-        | operadores '/' unario
-        | operadores '*' unario
-        | unario;
-
-unario: '!' unario
-        | '-' unario
+operadores: operadores '-' operando
+        | operadores '+' operando
+        | operadores '%' operando
+        | operadores '/' operando
+        | operadores '*' operando
         | operando;
 
-operando: '(' expressao ')'
+operando: '!' operando
+        | '-' operando
+        | '(' expressao ')'
         | TK_IDENTIFICADOR 
         | literal 
         | chamada_funcao;
