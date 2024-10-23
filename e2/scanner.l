@@ -51,6 +51,7 @@ comment     "//".*"\n"
 
 
 " "             {}
+"\t"            {}
 {identifier}    {return TK_IDENTIFICADOR;}
 {litInt}        {return TK_LIT_INT;}
 {litFloat}      {return TK_LIT_FLOAT;}
