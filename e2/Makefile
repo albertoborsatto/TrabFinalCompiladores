@@ -1,4 +1,4 @@
-all: build
+all: etapa2
 
 main: main.c
 	gcc main.c -c
@@ -11,5 +11,5 @@ bison: parser.y
 	bison -d parser.y
 	gcc -c parser.tab.c 
 
-build: bison scanner main  
+etapa2: bison scanner main  
 	gcc lex.yy.o parser.tab.o main.o -o etapa2

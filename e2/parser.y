@@ -65,34 +65,34 @@ controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao |
                         TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao |
                         TK_PR_WHILE '(' expressao ')' corpo_funcao;
 
-expressao: expressao TK_OC_OR expressao2 | expressao2;   /* OR tem menor precedência */
+expressao: expressao TK_OC_OR expressao2 | expressao2; 
 
-expressao2: expressao2 TK_OC_AND expressao3 | expressao3; /* AND tem precedência maior que OR */
+expressao2: expressao2 TK_OC_AND expressao3 | expressao3; 
 
-expressao3: expressao3 TK_OC_EQ expressao4   /* Comparações de igualdade e desigualdade */
+expressao3: expressao3 TK_OC_EQ expressao4   
           | expressao3 TK_OC_NE expressao4
           | expressao4;
 
-expressao4: expressao4 '<' expressao5        /* Comparações de maior e menor */
+expressao4: expressao4 '<' expressao5       
           | expressao4 '>' expressao5
           | expressao4 TK_OC_LE expressao5
           | expressao4 TK_OC_GE expressao5
           | expressao5;
 
-expressao5: expressao5 '+' expressao6        /* Soma e subtração, associatividade à esquerda */
+expressao5: expressao5 '+' expressao6        
           | expressao5 '-' expressao6
           | expressao6;
 
-expressao6: expressao6 '*' expressao7        /* Multiplicação, divisão e módulo, associatividade à esquerda */
+expressao6: expressao6 '*' expressao7        
           | expressao6 '/' expressao7
           | expressao6 '%' expressao7
           | expressao7;
 
-expressao7: '-' expressao8                   /* Unário, precedência mais alta */
+expressao7: '-' expressao8                  
           | '!' expressao8
           | expressao8;
 
-expressao8: operando                         /* Parênteses e operandos */
+expressao8: operando                        
           | '(' expressao ')';
 
 operando : TK_IDENTIFICADOR 
