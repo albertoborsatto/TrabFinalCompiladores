@@ -82,38 +82,42 @@ int get_line_number(void);
 
 %%
 
-programa: lista_de_funcoes | /* vazio */;
-lista_de_funcoes: lista_de_funcoes funcao | funcao;
+programa: lista_de_funcoes { $$ = $1; asd_print_graphviz($$); }
+        | /* vazio */ { $$ = NULL; asd_print_graphviz($$); };
+lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
+                | funcao { $$ = $1; };
 
-funcao: cabecalho_funcao corpo_funcao;
+funcao: cabecalho_funcao corpo_funcao { $$ = $1; asd_add_child($$, $2); };
 
 cabecalho_funcao: nome_funcao '=' lista_params '>' tipo | nome_funcao '=' '>' tipo; 
 lista_params: lista_params TK_OC_OR param | param;
 param: TK_IDENTIFICADOR '<' '-' tipo;
 
-nome_funcao: TK_IDENTIFICADOR
+nome_funcao: TK_IDENTIFICADOR { $$ = $1; }
 
-corpo_funcao: '{' bloco_comando '}' | '{' '}';
-bloco_comando: bloco_comando comando | comando;
+corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
+            | '{' '}' { $$ = NULL; };
+bloco_comando: bloco_comando comando 
+             | comando { $$ = $1; };
 
-comando:  variavel ';' 
-        | atribuicao ';' 
-        | chamada_funcao ';' 
-        | retorno ';' 
-        | controle_fluxo ';' 
-        | corpo_funcao ';';
+comando:  variavel ';' { $$ = $1; }
+        | atribuicao ';' { $$ = $1; }
+        | chamada_funcao ';' { $$ = $1; }
+        | retorno ';' { $$ = $1; }
+        | controle_fluxo ';' { $$ = $1; }
+        | corpo_funcao ';' { $$ = $1; };
 
-variavel: tipo lista_identificadores;
-lista_identificadores: TK_IDENTIFICADOR 
-                    | lista_identificadores ',' TK_IDENTIFICADOR 
-                    | TK_IDENTIFICADOR TK_OC_LE literal 
-                    | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal;
+variavel: tipo lista_identificadores { $$ = $1; asd_add_child($$, $2); };
+lista_identificadores: TK_IDENTIFICADOR { $$ = $1; }
+                    | lista_identificadores ',' TK_IDENTIFICADOR { $$ = $1; asd_add_child($$, $3.value); }
+                    | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, $1.value); asd_add_child($$, $3.value); }
+                    | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal { $$ = $1; asd_add_child($$, asd_new("<=")); asd_add_child($$, $3.value); asd_add_child($$, $5.value); };
 
     
 atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, $1.value); asd_add_child($$, $3); };
 
-chamada_funcao: nome_funcao '(' argumentos ')';
-argumentos: argumentos ',' argumento 
+chamada_funcao: nome_funcao '(' argumentos ')' { $$ = $1; asd_add_child($$, $2); };
+argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
 
@@ -160,8 +164,8 @@ operando: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
          | chamada_funcao { $$ = $1; } ;
 
 // ???
-tipo: TK_PR_INT { $$ = $1; }
-    | TK_PR_FLOAT { $$ = $1; };
+tipo: TK_PR_INT { $$ = asd_new("int"); }
+    | TK_PR_FLOAT { $$ = asd_new("float"); };
 
 literal: TK_LIT_FLOAT { $$ = $1; }
        | TK_LIT_INT { $$ = $1; };
