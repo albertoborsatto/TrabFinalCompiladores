@@ -1,3 +1,6 @@
+#ifndef _LEX_VALUE_H_
+#define _LEX_VALUE_H_
+
 typedef enum lex_type {
     LITERAL,
     IDENTIFIER
@@ -9,3 +12,5 @@ typedef struct lex_value
     int type;
     char *value;
 } valor_lexico;
+
+#endif

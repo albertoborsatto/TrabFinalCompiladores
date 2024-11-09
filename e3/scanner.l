@@ -67,7 +67,6 @@ int get_line_number(void)
 }
 
 valor_lexico create_lex_value(int type, const char *text) {
-    printf("tico");
     valor_lexico value;
     value.line_number = get_line_number();
     value.type = type;

@@ -5,6 +5,16 @@ void yyerror (char const *mensagem);
 int get_line_number(void);
 %}
 
+%code requires { 
+   #include "asd.h" 
+   #include "valor_lexico.h"
+}
+
+%union {
+    valor_lexico val_lexico;
+    asd_tree_t *tree;
+}
+
 %define parse.error verbose
 %token TK_PR_INT
 %token TK_PR_FLOAT
