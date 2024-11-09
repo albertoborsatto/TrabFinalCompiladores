@@ -1,0 +1,12 @@
+*.o
+*.out
+*.a
+*.so
+
+lex.yy.c
+parser.tab.h
+parser.tab.c
+
+etapa3
+
+#Makefile
