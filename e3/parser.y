@@ -110,17 +110,18 @@ lista_identificadores: TK_IDENTIFICADOR
                     | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal;
 
     
-atribuicao: TK_IDENTIFICADOR '=' expressao;
+atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, $1.value); asd_add_child($$, $3); };
 
 chamada_funcao: nome_funcao '(' argumentos ')';
-argumentos: argumentos ',' argumento | argumento;
-argumento: expressao;
+argumentos: argumentos ',' argumento 
+          | argumento { $$ = $1; }
+argumento: expressao { $$ = $1; };
 
-retorno: TK_PR_RETURN expressao;
+retorno: TK_PR_RETURN expressao { $$ = asd_new("return"); asd_add_child($$, $2); };
 
-controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao { $$ = asd_new("if"); }
-                | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao
-                | TK_PR_WHILE '(' expressao ')' corpo_funcao;
+controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); }
+                | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); asd_add_child($$, asd_new("else")); if ($7 != NULL) }
+                | TK_PR_WHILE '(' expressao ')' corpo_funcao { $$ = asd_new("while"); asd_add_child($$, $3);  if ($5 != NULL) asd_add_child($$, $5); };
 
 expressao: expressao TK_OC_OR expressao2  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
          | expressao2 { $$ = $1; }; /* OR tem menor precedência */
