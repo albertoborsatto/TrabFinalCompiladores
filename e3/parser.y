@@ -1,5 +1,6 @@
 %{ 
 #include <stdio.h>
+#include <string.h>
 int yylex(void);
 void yyerror (char const *mensagem);
 int get_line_number(void);
@@ -116,8 +117,8 @@ lista_identificadores: TK_IDENTIFICADOR { $$ = $1; }
     
 atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, $1.value); asd_add_child($$, $3); };
 
-chamada_funcao: nome_funcao '(' argumentos ')' { $$ = $1; asd_add_child($$, $2); };
-argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
+chamada_funcao: nome_funcao '(' argumentos ')' { char function_call[] = "call"; $$ = asd_new(strcat(function_call, $1.value)); asd_add_child($$, $3); };
+argumentos: argumentos ',' argumento 
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
 
