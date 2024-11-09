@@ -122,33 +122,33 @@ controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao
                 | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao
                 | TK_PR_WHILE '(' expressao ')' corpo_funcao;
 
-expressao: expressao TK_OC_OR expressao2  { $$ = asd_new("||"); asd_child($$, $1); asd_child($$, $3); }
+expressao: expressao TK_OC_OR expressao2  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
          | expressao2 { $$ = $1; }; /* OR tem menor precedência */
 
-expressao2: expressao2 TK_OC_AND expressao3 { $$ = asd_new("&&"); asd_child($$, $1); asd_child($$, $3); }
+expressao2: expressao2 TK_OC_AND expressao3 { $$ = asd_new("&&"); asd_add_child($$, $1); asd_add_child($$, $3); }
           | expressao3 { $$ = $1; }; /* AND tem precedência maior que OR */
 
-expressao3: expressao3 TK_OC_EQ expressao4 { $$ = asd_new("=="); asd_child($$, $1); asd_child($$, $3); }  /* Comparações de igualdade e desigualdade */
-          | expressao3 TK_OC_NE expressao4 { $$ = asd_new("!="); asd_child($$, $1); asd_child($$, $3); }
+expressao3: expressao3 TK_OC_EQ expressao4 { $$ = asd_new("=="); asd_add_child($$, $1); asd_add_child($$, $3); }  /* Comparações de igualdade e desigualdade */
+          | expressao3 TK_OC_NE expressao4 { $$ = asd_new("!="); asd_add_child($$, $1); asd_add_child($$, $3); }
           | expressao4 { $$ = $1; };
 
-expressao4: expressao4 '<' expressao5 { $$ = asd_new("<"); asd_child($$, $1); asd_child($$, $3); }       /* Comparações de maior e menor */
-          | expressao4 '>' expressao5 { $$ = asd_new(">"); asd_child($$, $1); asd_child($$, $3); }
-          | expressao4 TK_OC_LE expressao5 { $$ = asd_new("<="); asd_child($$, $1); asd_child($$, $3); }
-          | expressao4 TK_OC_GE expressao5 { $$ = asd_new(">="); asd_child($$, $1); asd_child($$, $3); }
+expressao4: expressao4 '<' expressao5 { $$ = asd_new("<"); asd_add_child($$, $1); asd_add_child($$, $3); }       /* Comparações de maior e menor */
+          | expressao4 '>' expressao5 { $$ = asd_new(">"); asd_add_child($$, $1); asd_add_child($$, $3); }
+          | expressao4 TK_OC_LE expressao5 { $$ = asd_new("<="); asd_add_child($$, $1); asd_add_child($$, $3); }
+          | expressao4 TK_OC_GE expressao5 { $$ = asd_new(">="); asd_add_child($$, $1); asd_add_child($$, $3); }
           | expressao5 { $$ = $1; };
 
-expressao5: expressao5 '+' expressao6 { $$ = asd_new("+"); asd_child($$, $1); asd_child($$, $3); }        /* Soma e subtração, associatividade à esquerda */
-          | expressao5 '-' expressao6 { $$ = asd_new("-"); asd_child($$, $1); asd_child($$, $3); }
+expressao5: expressao5 '+' expressao6 { $$ = asd_new("+"); asd_add_child($$, $1); asd_add_child($$, $3); }        /* Soma e subtração, associatividade à esquerda */
+          | expressao5 '-' expressao6 { $$ = asd_new("-"); asd_add_child($$, $1); asd_add_child($$, $3); }
           | expressao6 { $$ = $1; };
 
-expressao6: expressao6 '*' expressao7 { $$ = asd_new("*"); asd_child($$, $1); asd_child($$, $3); } /* Multiplicação, divisão e módulo, associatividade à esquerda */
-          | expressao6 '/' expressao7 { $$ = asd_new("/"); asd_child($$, $1); asd_child($$, $3); }
-          | expressao6 '%' expressao7 { $$ = asd_new("%"); asd_child($$, $1); asd_child($$, $3); }
+expressao6: expressao6 '*' expressao7 { $$ = asd_new("*"); asd_add_child($$, $1); asd_add_child($$, $3); } /* Multiplicação, divisão e módulo, associatividade à esquerda */
+          | expressao6 '/' expressao7 { $$ = asd_new("/"); asd_add_child($$, $1); asd_add_child($$, $3); }
+          | expressao6 '%' expressao7 { $$ = asd_new("%"); asd_add_child($$, $1); asd_add_child($$, $3); }
           | expressao7 { $$ = $1; };
 
-expressao7: '-' expressao8 { $$ = asd_new("-"); asd_child($$, $2); }                  /* Unário, precedência mais alta */
-          | '!' expressao8 { $$ = asd_new("!"); asd_child($$, $2); }
+expressao7: '-' expressao8 { $$ = asd_new("-"); asd_add_child($$, $2); }                  /* Unário, precedência mais alta */
+          | '!' expressao8 { $$ = asd_new("!"); asd_add_child($$, $2); }
           | expressao8 { $$ = $1; };
 
 expressao8: operando { $$ = $1; }                         /* Parênteses e operandos */
@@ -159,7 +159,7 @@ operando: TK_IDENTIFICADOR { $$ = $1; }
          | chamada_funcao { $$ = $1; } ;
 
 // ???
-tipo: TK_PR_INT { $$ = $1; } 
+tipo: TK_PR_INT { $$ = $1; }
     | TK_PR_FLOAT { $$ = $1; };
 
 literal: TK_LIT_FLOAT { $$ = $1; }
