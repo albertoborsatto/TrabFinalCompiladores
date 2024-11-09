@@ -120,7 +120,7 @@ argumento: expressao { $$ = $1; };
 retorno: TK_PR_RETURN expressao { $$ = asd_new("return"); asd_add_child($$, $2); };
 
 controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); }
-                | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); asd_add_child($$, asd_new("else")); if ($7 != NULL) }
+                | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); if ($7 != NULL) asd_add_child($$, $7); }
                 | TK_PR_WHILE '(' expressao ')' corpo_funcao { $$ = asd_new("while"); asd_add_child($$, $3);  if ($5 != NULL) asd_add_child($$, $5); };
 
 expressao: expressao TK_OC_OR expressao2  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
