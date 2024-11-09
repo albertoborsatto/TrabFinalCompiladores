@@ -75,29 +75,39 @@ controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao
                 | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao
                 | TK_PR_WHILE '(' expressao ')' corpo_funcao;
 
-expressao: expressao TK_OC_OR operadores 
-        | expressao TK_OC_AND operadores
-        | expressao TK_OC_NE operadores
-        | expressao TK_OC_EQ operadores
-        | expressao TK_OC_GE operadores
-        | expressao TK_OC_LE operadores
-        | expressao '>' operadores
-        | expressao '<' operadores
-        | operadores;
+expressao: expressao TK_OC_OR expressao2 | expressao2;   /* OR tem menor precedência */
 
-operadores: operadores '-' operando
-        | operadores '+' operando
-        | operadores '%' operando
-        | operadores '/' operando
-        | operadores '*' operando
-        | operando;
+expressao2: expressao2 TK_OC_AND expressao3 | expressao3; /* AND tem precedência maior que OR */
 
-operando: '!' operando
-        | '-' operando
-        | '(' expressao ')'
-        | TK_IDENTIFICADOR 
-        | literal 
-        | chamada_funcao;
+expressao3: expressao3 TK_OC_EQ expressao4   /* Comparações de igualdade e desigualdade */
+          | expressao3 TK_OC_NE expressao4
+          | expressao4;
+
+expressao4: expressao4 '<' expressao5        /* Comparações de maior e menor */
+          | expressao4 '>' expressao5
+          | expressao4 TK_OC_LE expressao5
+          | expressao4 TK_OC_GE expressao5
+          | expressao5;
+
+expressao5: expressao5 '+' expressao6        /* Soma e subtração, associatividade à esquerda */
+          | expressao5 '-' expressao6
+          | expressao6;
+
+expressao6: expressao6 '*' expressao7        /* Multiplicação, divisão e módulo, associatividade à esquerda */
+          | expressao6 '/' expressao7
+          | expressao6 '%' expressao7
+          | expressao7;
+
+expressao7: '-' expressao8                   /* Unário, precedência mais alta */
+          | '!' expressao8
+          | expressao8;
+
+expressao8: operando                         /* Parênteses e operandos */
+          | '(' expressao ')';
+
+operando : TK_IDENTIFICADOR 
+         | literal
+         | chamada_funcao;
 
 tipo: TK_PR_INT | TK_PR_FLOAT;
 literal: TK_LIT_FLOAT | TK_LIT_INT;
