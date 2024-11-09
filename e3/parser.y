@@ -15,7 +15,7 @@ int get_line_number(void);
     asd_tree_t *tree;
 }
 
-%define parse.error verbose
+/* %define parse.error verbose
 %token TK_PR_INT
 %token TK_PR_FLOAT
 %token TK_PR_IF
@@ -31,7 +31,54 @@ int get_line_number(void);
 %token TK_IDENTIFICADOR
 %token TK_LIT_INT
 %token TK_LIT_FLOAT
-%token TK_ERRO
+%token TK_ERRO */
+
+%token<val_lexico> TK_PR_INT
+%token<val_lexico> TK_PR_FLOAT
+%token<val_lexico> TK_PR_IF
+%token<val_lexico> TK_PR_ELSE
+%token<val_lexico> TK_PR_WHILE
+%token<val_lexico> TK_PR_RETURN
+%token<val_lexico> TK_OC_LE
+%token<val_lexico> TK_OC_GE
+%token<val_lexico> TK_OC_EQ
+%token<val_lexico> TK_OC_NE
+%token<val_lexico> TK_OC_AND
+%token<val_lexico> TK_OC_OR
+%token<val_lexico> TK_IDENTIFICADOR
+%token<val_lexico> TK_LIT_INT
+%token<val_lexico> TK_LIT_FLOAT
+%token<val_lexico> TK_ERRO
+%type<val_lexico> nome_funcao
+%type<val_lexico> tipo
+%type<val_lexico> literal
+
+%type<tree> programa
+%type<tree> lista_de_funcoes
+%type<tree> funcao
+%type<tree> cabecalho_funcao
+%type<tree> lista_params
+%type<tree> param
+%type<tree> corpo_funcao
+%type<tree> bloco_comando
+%type<tree> comando
+%type<tree> variavel
+%type<tree> lista_identificadores
+%type<tree> atribuicao
+%type<tree> chamada_funcao
+%type<tree> argumentos
+%type<tree> argumento
+%type<tree> retorno
+%type<tree> controle_fluxo
+%type<tree> expressao
+%type<tree> expressao2
+%type<tree> expressao3
+%type<tree> expressao4
+%type<tree> expressao5
+%type<tree> expressao6
+%type<tree> expressao7
+%type<tree> expressao8 
+
 
 %%
 
@@ -109,7 +156,7 @@ operando : TK_IDENTIFICADOR
          | literal
          | chamada_funcao;
 
-tipo: TK_PR_INT | TK_PR_FLOAT;
+tipo: TK_PR_INT | TK_PR_FLOAT ;
 literal: TK_LIT_FLOAT | TK_LIT_INT;
 
 %%
