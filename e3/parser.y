@@ -118,7 +118,7 @@ argumento: expressao;
 
 retorno: TK_PR_RETURN expressao;
 
-controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao 
+controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao { $$ = asd_new("if"); }
                 | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao
                 | TK_PR_WHILE '(' expressao ')' corpo_funcao;
 
@@ -154,8 +154,8 @@ expressao7: '-' expressao8 { $$ = asd_new("-"); asd_add_child($$, $2); }        
 expressao8: operando { $$ = $1; }                         /* Parênteses e operandos */
           | '(' expressao ')' { $$ = $2; };
 
-operando: TK_IDENTIFICADOR { $$ = $1; }
-         | literal { $$ = $1; }
+operando: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
+         | literal { $$ = asd_new($1.value); }
          | chamada_funcao { $$ = $1; } ;
 
 // ???
