@@ -52,9 +52,9 @@ comment     "//".*"\n"
 
 " "             {}
 "\t"            {}
-{identifier}    { yylval.val_lexico = create_lex_value(IDENTIFIER, yytext); return TK_IDENTIFICADOR; }
-{litInt}        { yylval.val_lexico = create_lex_value(LITERAL, yytext); return TK_LIT_INT; }
-{litFloat}      { yylval.val_lexico = create_lex_value(LITERAL, yytext); return TK_LIT_FLOAT; }
+{identifier}    { yylval.val_lexico = create_lex_value(line_number, IDENTIFIER, strdup(yytext)); return TK_IDENTIFICADOR; }
+{litInt}        { yylval.val_lexico = create_lex_value(line_number, LITERAL, strdup(yytext)); return TK_LIT_INT; }
+{litFloat}      { yylval.val_lexico = create_lex_value(line_number, LITERAL, strdup(yytext)); return TK_LIT_FLOAT; }
 {comment}       {line_number++;}
 \n              {line_number++;}
 .               {return TK_ERRO;}
@@ -66,11 +66,12 @@ int get_line_number(void)
     return line_number;
 }
 
-valor_lexico create_lex_value(int type, const char *text) {
+valor_lexico create_lex_value(int line_number, int type, char *text) {
     valor_lexico value;
-    value.line_number = get_line_number();
+    value.line_number = line_number;
     value.type = type;
-    value.value = strdup(text); 
+    value.value = text; 
     
     return value;
 }
+
