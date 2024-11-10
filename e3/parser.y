@@ -35,7 +35,6 @@ extern void *arvore;
 %token<val_lexico> TK_IDENTIFICADOR
 %token<val_lexico> TK_LIT_INT
 %token<val_lexico> TK_LIT_FLOAT
-%type<tree> tipo
 %type<val_lexico> literal
 
 %type<tree> programa
@@ -68,7 +67,7 @@ extern void *arvore;
 %%
 
 // início
-programa: lista_de_funcoes { arvore = $1; }
+programa: lista_de_funcoes { arvore = $1; asd_print_graphviz(arvore);}
         | /* vazio */ { $$ = NULL; arvore = $$; };
 
 lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
@@ -78,13 +77,13 @@ lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
 // função$$ = $1;
 funcao: cabecalho_funcao corpo_funcao { $$ = $1; asd_add_child($$, $2); };
 
-cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = asd_new($1.value); asd_add_child($$, $3); asd_add_child($$, $5); } 
-                | TK_IDENTIFICADOR '=' '>' tipo { $$ = asd_new($1.value); asd_add_child($$, $4); }; 
+cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = asd_new($1.value); } 
+                | TK_IDENTIFICADOR '=' '>' tipo { $$ = asd_new($1.value); }; 
 
 // parâmetros
 lista_params: lista_params TK_OC_OR param  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
             | param { $$ = $1; };
-param: TK_IDENTIFICADOR '<' '-' tipo { $$ = asd_new($1.value); asd_add_child($$, $4); };
+param: TK_IDENTIFICADOR '<' '-' tipo { $$ = asd_new($1.value); };
 
 // corpo
 corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
@@ -100,7 +99,7 @@ comando:  variavel ';' { $$ = $1; }
         | controle_fluxo ';' { $$ = $1; }
         | corpo_funcao ';' { $$ = $1; };
 
-variavel: tipo lista_identificadores { $$ = $1; asd_add_child($$, $2); };
+variavel: tipo lista_identificadores { $$ = $2; };
 lista_identificadores: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
                     | lista_identificadores ',' TK_IDENTIFICADOR { $$ = $1; asd_add_child($$, asd_new($3.value)); }
                     | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, asd_new($3.value)); }
@@ -160,8 +159,8 @@ operando: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
          | chamada_funcao { $$ = $1; } ;
 
 // ???
-tipo: TK_PR_INT { $$ = NULL; }
-    | TK_PR_FLOAT { $$ =  NULL; };
+tipo: TK_PR_INT 
+    | TK_PR_FLOAT
 
 literal: TK_LIT_FLOAT { $$ = $1; }
        | TK_LIT_INT { $$ = $1; };
