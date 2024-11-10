@@ -1471,7 +1471,7 @@ yyreduce:
     {
   case 2: /* programa: lista_de_funcoes  */
 #line 71 "parser.y"
-                           { (yyval.tree) = (yyvsp[0].tree); arvore = (yyval.tree); }
+                           { arvore = (yyvsp[0].tree); }
 #line 1476 "parser.tab.c"
     break;
 
@@ -1501,13 +1501,13 @@ yyreduce:
 
   case 7: /* cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo  */
 #line 81 "parser.y"
-                                                             { (yyval.tree) = NULL; }
+                                                             { (yyval.tree) = asd_new((yyvsp[-4].val_lexico).value); asd_add_child((yyval.tree), (yyvsp[-2].tree)); asd_add_child((yyval.tree), (yyvsp[0].tree)); }
 #line 1506 "parser.tab.c"
     break;
 
   case 8: /* cabecalho_funcao: TK_IDENTIFICADOR '=' '>' tipo  */
 #line 82 "parser.y"
-                                                { (yyval.tree) = NULL; }
+                                                { (yyval.tree) = asd_new((yyvsp[-3].val_lexico).value); asd_add_child((yyval.tree), (yyvsp[0].tree)); }
 #line 1512 "parser.tab.c"
     break;
 
@@ -1525,7 +1525,7 @@ yyreduce:
 
   case 11: /* param: TK_IDENTIFICADOR '<' '-' tipo  */
 #line 87 "parser.y"
-                                     { (yyval.tree) = NULL; }
+                                     { (yyval.tree) = asd_new((yyvsp[-3].val_lexico).value); asd_add_child((yyval.tree), (yyvsp[0].tree)); }
 #line 1530 "parser.tab.c"
     break;
 
@@ -1543,7 +1543,7 @@ yyreduce:
 
   case 14: /* bloco_comando: bloco_comando comando  */
 #line 92 "parser.y"
-                                      { (yyval.tree) = NULL; }
+                                      { (yyval.tree) = (yyvsp[-1].tree); asd_add_child((yyval.tree), (yyvsp[0].tree)); }
 #line 1548 "parser.tab.c"
     break;
 
@@ -1597,7 +1597,7 @@ yyreduce:
 
   case 23: /* lista_identificadores: TK_IDENTIFICADOR  */
 #line 104 "parser.y"
-                                        { (yyval.tree) = NULL; }
+                                        { (yyval.tree) = asd_new((yyvsp[0].val_lexico).value); }
 #line 1602 "parser.tab.c"
     break;
 
@@ -1609,7 +1609,7 @@ yyreduce:
 
   case 25: /* lista_identificadores: TK_IDENTIFICADOR TK_OC_LE literal  */
 #line 106 "parser.y"
-                                                        { (yyval.tree) = asd_new("<="); asd_add_child((yyval.tree), asd_new((yyvsp[-2].val_lexico).value)); asd_add_child((yyval.tree), asd_new((yyvsp[-2].val_lexico).value)); }
+                                                        { (yyval.tree) = asd_new("<="); asd_add_child((yyval.tree), asd_new((yyvsp[-2].val_lexico).value)); asd_add_child((yyval.tree), asd_new((yyvsp[0].val_lexico).value)); }
 #line 1614 "parser.tab.c"
     break;
 
@@ -1627,7 +1627,7 @@ yyreduce:
 
   case 28: /* chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')'  */
 #line 112 "parser.y"
-                                                    { (yyval.tree) = (yyvsp[-3].val_lexico).value; asd_add_child((yyval.tree), (yyvsp[-1].tree)); }
+                                                    { (yyval.tree) = asd_new((yyvsp[-3].val_lexico).value); asd_add_child((yyval.tree), (yyvsp[-1].tree)); }
 #line 1632 "parser.tab.c"
     break;
 

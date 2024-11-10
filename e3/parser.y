@@ -68,7 +68,7 @@ extern void *arvore;
 %%
 
 // início
-programa: lista_de_funcoes { $$ = $1; arvore = $$; }
+programa: lista_de_funcoes { arvore = $1; }
         | /* vazio */ { $$ = NULL; arvore = $$; };
 
 lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
@@ -78,18 +78,18 @@ lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
 // função$$ = $1;
 funcao: cabecalho_funcao corpo_funcao { $$ = $1; asd_add_child($$, $2); };
 
-cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = NULL; } 
-                | TK_IDENTIFICADOR '=' '>' tipo { $$ = NULL; }; 
+cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = asd_new($1.value); asd_add_child($$, $3); asd_add_child($$, $5); } 
+                | TK_IDENTIFICADOR '=' '>' tipo { $$ = asd_new($1.value); asd_add_child($$, $4); }; 
 
 // parâmetros
 lista_params: lista_params TK_OC_OR param  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
             | param { $$ = $1; };
-param: TK_IDENTIFICADOR '<' '-' tipo { $$ = NULL; };
+param: TK_IDENTIFICADOR '<' '-' tipo { $$ = asd_new($1.value); asd_add_child($$, $4); };
 
 // corpo
 corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
             | '{' '}' { $$ = NULL; };
-bloco_comando: bloco_comando comando  { $$ = NULL; }
+bloco_comando: bloco_comando comando  { $$ = $1; asd_add_child($$, $2); }
              | comando { $$ = $1; };
 
 // comandos ---------------------------------------------------------------
@@ -101,7 +101,7 @@ comando:  variavel ';' { $$ = $1; }
         | corpo_funcao ';' { $$ = $1; };
 
 variavel: tipo lista_identificadores { $$ = $1; asd_add_child($$, $2); };
-lista_identificadores: TK_IDENTIFICADOR { $$ = NULL; }
+lista_identificadores: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
                     | lista_identificadores ',' TK_IDENTIFICADOR { $$ = $1; asd_add_child($$, asd_new($3.value)); }
                     | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, asd_new($3.value)); }
                     | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal { $$ = $1; asd_add_child($$, asd_new("<=")); asd_add_child($$, asd_new($3.value)); asd_add_child($$, asd_new($5.value)); };
@@ -109,7 +109,7 @@ lista_identificadores: TK_IDENTIFICADOR { $$ = NULL; }
     
 atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, $3); };
 
-chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { $$ = $1.value; asd_add_child($$, $3); } ;
+chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { $$ = asd_new($1.value); asd_add_child($$, $3); } ;
 argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
