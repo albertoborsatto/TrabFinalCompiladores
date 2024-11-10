@@ -3,6 +3,7 @@
 int yylex(void);
 void yyerror (char const *mensagem);
 int get_line_number(void);
+extern void *arvore;
 %}
 
 %code requires { 
@@ -15,7 +16,8 @@ int get_line_number(void);
     asd_tree_t *tree;
 }
 
-/* %define parse.error verbose
+%define parse.error verbose
+
 %token TK_PR_INT
 %token TK_PR_FLOAT
 %token TK_PR_IF
@@ -28,27 +30,11 @@ int get_line_number(void);
 %token TK_OC_NE
 %token TK_OC_AND
 %token TK_OC_OR
-%token TK_IDENTIFICADOR
-%token TK_LIT_INT
-%token TK_LIT_FLOAT
-%token TK_ERRO */
+%token TK_ERRO
 
-%token<val_lexico> TK_PR_INT
-%token<val_lexico> TK_PR_FLOAT
-%token<val_lexico> TK_PR_IF
-%token<val_lexico> TK_PR_ELSE
-%token<val_lexico> TK_PR_WHILE
-%token<val_lexico> TK_PR_RETURN
-%token<val_lexico> TK_OC_LE
-%token<val_lexico> TK_OC_GE
-%token<val_lexico> TK_OC_EQ
-%token<val_lexico> TK_OC_NE
-%token<val_lexico> TK_OC_AND
-%token<val_lexico> TK_OC_OR
 %token<val_lexico> TK_IDENTIFICADOR
 %token<val_lexico> TK_LIT_INT
 %token<val_lexico> TK_LIT_FLOAT
-%token<val_lexico> TK_ERRO
 %type<tree> tipo
 %type<val_lexico> literal
 
@@ -82,8 +68,8 @@ int get_line_number(void);
 %%
 
 // início
-programa: lista_de_funcoes { $$ = $1; }
-        | /* vazio */ { $$ = NULL; };
+programa: lista_de_funcoes { $$ = $1; arvore = $$; }
+        | /* vazio */ { $$ = NULL; arvore = $$; };
 
 lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
                 | funcao { $$ = $1; };
@@ -116,14 +102,14 @@ comando:  variavel ';' { $$ = $1; }
 
 variavel: tipo lista_identificadores { $$ = $1; asd_add_child($$, $2); };
 lista_identificadores: TK_IDENTIFICADOR { $$ = NULL; }
-                    | lista_identificadores ',' TK_IDENTIFICADOR { $$ = $1; asd_add_child($$, $3.value); }
-                    | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, $1.value); asd_add_child($$, $3.value); }
-                    | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal { $$ = $1; asd_add_child($$, asd_new("<=")); asd_add_child($$, $3.value); asd_add_child($$, $5.value); };
+                    | lista_identificadores ',' TK_IDENTIFICADOR { $$ = $1; asd_add_child($$, asd_new($3.value)); }
+                    | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, asd_new($3.value)); }
+                    | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal { $$ = $1; asd_add_child($$, asd_new("<=")); asd_add_child($$, asd_new($3.value)); asd_add_child($$, asd_new($5.value)); };
 
     
-atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, $1.value); asd_add_child($$, $3); };
+atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, $3); };
 
-chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { $$ = NULL; } ;
+chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { $$ = $1.value; asd_add_child($$, $3); } ;
 argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
