@@ -49,8 +49,7 @@ int get_line_number(void);
 %token<val_lexico> TK_LIT_INT
 %token<val_lexico> TK_LIT_FLOAT
 %token<val_lexico> TK_ERRO
-%type<val_lexico> nome_funcao
-%type<val_lexico> tipo
+%type<tree> tipo
 %type<val_lexico> literal
 
 %type<tree> programa
@@ -82,24 +81,32 @@ int get_line_number(void);
 
 %%
 
-programa: lista_de_funcoes { $$ = $1; asd_print_graphviz($$); }
-        | /* vazio */ { $$ = NULL; asd_print_graphviz($$); };
+// início
+programa: lista_de_funcoes { $$ = $1; }
+        | /* vazio */ { $$ = NULL; };
+
 lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
                 | funcao { $$ = $1; };
 
+
+// função$$ = $1;
 funcao: cabecalho_funcao corpo_funcao { $$ = $1; asd_add_child($$, $2); };
 
-cabecalho_funcao: nome_funcao '=' lista_params '>' tipo | nome_funcao '=' '>' tipo; 
-lista_params: lista_params TK_OC_OR param | param;
-param: TK_IDENTIFICADOR '<' '-' tipo;
+cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = NULL; } 
+                | TK_IDENTIFICADOR '=' '>' tipo { $$ = NULL; }; 
 
-nome_funcao: TK_IDENTIFICADOR { $$ = $1; }
+// parâmetros
+lista_params: lista_params TK_OC_OR param  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
+            | param { $$ = $1; };
+param: TK_IDENTIFICADOR '<' '-' tipo { $$ = NULL; };
 
+// corpo
 corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
             | '{' '}' { $$ = NULL; };
-bloco_comando: bloco_comando comando 
+bloco_comando: bloco_comando comando  { $$ = NULL; }
              | comando { $$ = $1; };
 
+// comandos ---------------------------------------------------------------
 comando:  variavel ';' { $$ = $1; }
         | atribuicao ';' { $$ = $1; }
         | chamada_funcao ';' { $$ = $1; }
@@ -108,7 +115,7 @@ comando:  variavel ';' { $$ = $1; }
         | corpo_funcao ';' { $$ = $1; };
 
 variavel: tipo lista_identificadores { $$ = $1; asd_add_child($$, $2); };
-lista_identificadores: TK_IDENTIFICADOR { $$ = $1; }
+lista_identificadores: TK_IDENTIFICADOR { $$ = NULL; }
                     | lista_identificadores ',' TK_IDENTIFICADOR { $$ = $1; asd_add_child($$, $3.value); }
                     | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, $1.value); asd_add_child($$, $3.value); }
                     | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal { $$ = $1; asd_add_child($$, asd_new("<=")); asd_add_child($$, $3.value); asd_add_child($$, $5.value); };
@@ -116,7 +123,7 @@ lista_identificadores: TK_IDENTIFICADOR { $$ = $1; }
     
 atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, $1.value); asd_add_child($$, $3); };
 
-chamada_funcao: nome_funcao '(' argumentos ')' { $$ = $1; asd_add_child($$, $2); };
+chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { $$ = NULL; } ;
 argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
@@ -127,6 +134,9 @@ controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao { $$ = asd_new("if"); as
                 | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); if ($7 != NULL) asd_add_child($$, $7); }
                 | TK_PR_WHILE '(' expressao ')' corpo_funcao { $$ = asd_new("while"); asd_add_child($$, $3);  if ($5 != NULL) asd_add_child($$, $5); };
 
+// comandos ---------------------------------------------------------------
+
+// expressões
 expressao: expressao TK_OC_OR expressao2  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
          | expressao2 { $$ = $1; }; /* OR tem menor precedência */
 
@@ -164,8 +174,8 @@ operando: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
          | chamada_funcao { $$ = $1; } ;
 
 // ???
-tipo: TK_PR_INT { $$ = asd_new("int"); }
-    | TK_PR_FLOAT { $$ = asd_new("float"); };
+tipo: TK_PR_INT { $$ = NULL; }
+    | TK_PR_FLOAT { $$ =  NULL; };
 
 literal: TK_LIT_FLOAT { $$ = $1; }
        | TK_LIT_INT { $$ = $1; };
