@@ -75,7 +75,7 @@ lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
 
 
 // função$$ = $1;
-funcao: cabecalho_funcao corpo_funcao { $$ = $1; asd_add_child($$, $2); };
+funcao: cabecalho_funcao corpo_funcao { $$ = $1; if ($2 != NULL) asd_add_child($$, $2); };
 
 cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = asd_new($1.value); } 
                 | TK_IDENTIFICADOR '=' '>' tipo { $$ = asd_new($1.value); }; 

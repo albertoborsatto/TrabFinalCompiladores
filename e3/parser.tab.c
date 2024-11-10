@@ -1495,7 +1495,7 @@ yyreduce:
 
   case 6: /* funcao: cabecalho_funcao corpo_funcao  */
 #line 78 "parser.y"
-                                      { (yyval.tree) = (yyvsp[-1].tree); asd_add_child((yyval.tree), (yyvsp[0].tree)); }
+                                      { (yyval.tree) = (yyvsp[-1].tree); if ((yyvsp[0].tree) != NULL) asd_add_child((yyval.tree), (yyvsp[0].tree)); }
 #line 1500 "parser.tab.c"
     break;
 
