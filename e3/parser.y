@@ -89,7 +89,16 @@ param: TK_IDENTIFICADOR '<' '-' tipo { $$ = asd_new($1.value); };
 // corpo
 corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
             | '{' '}' { $$ = NULL; };
-bloco_comando: bloco_comando comando  { $$ = $1; asd_add_child($$, $2); }
+bloco_comando: bloco_comando comando  { $$ = $1;   
+                    // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     
+                    if ($$->number_of_children==3 && strcmp($$->label, "<=") == 0) {
+                        asd_tree_t *last_child = $$->children[$$->number_of_children - 1];
+                        asd_add_child(last_child, $2);
+                    }
+                    else {
+                        asd_add_child($$, $2);
+                    }
+                }
              | comando { $$ = $1; };
 
 // comandos ---------------------------------------------------------------
@@ -113,7 +122,7 @@ atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$
 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { 
     char call[] = "call ";
     $$ = asd_new(strcat(call, $1.value)); asd_add_child($$, $3); 
-    } ;
+} ;
 argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
