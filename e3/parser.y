@@ -68,12 +68,11 @@ extern void *arvore;
 %%
 
 // início
-programa: lista_de_funcoes { arvore = $1; asd_print_graphviz(arvore);}
+programa: lista_de_funcoes { $$ = $1; arvore = $$; asd_print_graphviz(arvore);}
         | /* vazio */ { $$ = NULL; arvore = $$; };
 
-lista_de_funcoes: lista_de_funcoes funcao { $$ = $1; asd_add_child($$, $2); }
+lista_de_funcoes: funcao lista_de_funcoes { $$ = $1; asd_add_child($$, $2); }
                 | funcao { $$ = $1; };
-
 
 // função$$ = $1;
 funcao: cabecalho_funcao corpo_funcao { $$ = $1; if ($2 != NULL) asd_add_child($$, $2); };
@@ -91,8 +90,11 @@ corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
             | '{' '}' { $$ = NULL; };
 bloco_comando: bloco_comando comando  { $$ = $1;   
                     // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     
-                    if ($$!=NULL && $$->number_of_children==3 && strcmp($$->label, "<=") == 0) {
-                        asd_tree_t *last_child = $$->children[$$->number_of_children - 1];
+                    if ($$!=NULL) {
+                        asd_tree_t *last_child = $1;
+                        while(last_child->number_of_children == 3) {
+                            last_child = last_child->children[last_child->number_of_children-1];
+                        }
                         asd_add_child(last_child, $2);
                     }
                     else {
