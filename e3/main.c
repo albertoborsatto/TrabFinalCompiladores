@@ -16,26 +16,19 @@ int main (int argc, char **argv)
 
 void exporta(void *arvore)
 {
+    // testar se arvore é null
     if (arvore == NULL) {
         return;
     }
-    
+
     asd_tree_t *tree = (asd_tree_t *) arvore;
-    fprintf(stdout, "%p [label=\"%s\"]; \n", tree, tree->label);
-    
-    int i = 0;
-    for (i = 0; i < tree->number_of_children; i++) {
-        fprintf(stdout, "%p, %p\n", tree, tree->children[i]);
+    printf("%p [label=\"%s\"];\n", tree, tree->label);
+
+    for (int i=0; i < tree->number_of_children; i++) {
+        printf("%p, %p \n", tree, tree->children);
         exporta(tree->children[i]);
     }
 
-    // Libera memória ao final da exportação
-    free(tree->children);
-    tree->children = NULL;
-    free(tree->label);
-    tree->label = NULL;
-    free(tree);
-    tree = NULL;
-
+    // return
     return;
 }
