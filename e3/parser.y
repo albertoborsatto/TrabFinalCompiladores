@@ -95,7 +95,8 @@ bloco_comando: bloco_comando comando  { $$ = $1;
                         while(last_child->number_of_children == 3) {
                             last_child = last_child->children[last_child->number_of_children-1];
                         }
-                        asd_add_child(last_child, $2);
+                        if ($2!=NULL)
+                            asd_add_child(last_child, $2);
                     }
                     else {
                         if ($$==NULL) {
