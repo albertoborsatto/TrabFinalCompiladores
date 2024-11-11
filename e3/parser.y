@@ -91,7 +91,7 @@ corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
             | '{' '}' { $$ = NULL; };
 bloco_comando: bloco_comando comando  { $$ = $1;   
                     // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     
-                    if ($$->number_of_children==3 && strcmp($$->label, "<=") == 0) {
+                    if ($$!=NULL && $$->number_of_children==3 && strcmp($$->label, "<=") == 0) {
                         asd_tree_t *last_child = $$->children[$$->number_of_children - 1];
                         asd_add_child(last_child, $2);
                     }
