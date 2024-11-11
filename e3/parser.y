@@ -96,7 +96,11 @@ bloco_comando: bloco_comando comando  { $$ = $1;
                         asd_add_child(last_child, $2);
                     }
                     else {
-                        asd_add_child($$, $2);
+                        if ($$==NULL) {
+                            $$ = $2;
+                        } else {
+                            asd_add_child($$, $2);
+                        }
                     }
                 }
              | comando { $$ = $1; };
