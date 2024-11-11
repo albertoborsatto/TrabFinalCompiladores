@@ -101,15 +101,19 @@ comando:  variavel ';' { $$ = $1; }
         | corpo_funcao ';' { $$ = $1; };
 
 variavel: tipo lista_identificadores { $$ = $2; };
-lista_identificadores: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
-                    | lista_identificadores ',' TK_IDENTIFICADOR { $$ = $1; asd_add_child($$, asd_new($3.value)); }
+lista_identificadores: TK_IDENTIFICADOR { $$ = NULL; }
+                    | TK_IDENTIFICADOR ',' lista_identificadores { $$ = $3; }
                     | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, asd_new($3.value)); }
-                    | lista_identificadores ',' TK_IDENTIFICADOR TK_OC_LE literal { $$ = $1; asd_add_child($$, asd_new("<=")); asd_add_child($$, asd_new($3.value)); asd_add_child($$, asd_new($5.value)); };
+                    | TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificadores
+                    { $$ = asd_new("<="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, asd_new($3.value)); if ($5!=NULL) asd_add_child($$, $5); };
 
     
 atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, $3); };
 
-chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { $$ = asd_new($1.value); asd_add_child($$, $3); } ;
+chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { 
+    char call[] = "call ";
+    $$ = asd_new(strcat(call, $1.value)); asd_add_child($$, $3); 
+    } ;
 argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
