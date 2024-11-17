@@ -25,9 +25,16 @@ void exporta(void *arvore)
     printf("%p [label=\"%s\"];\n", tree, tree->label);
 
     for (int i=0; i < tree->number_of_children; i++) {
-        printf("%p, %p \n", tree, tree->children);
+        printf("%p, %p \n", tree, tree->children[i]);
         exporta(tree->children[i]);
     }
+
+    free(tree->label);
+    tree->label = NULL;
+    free(tree->children);
+    tree->children = NULL;
+    free(tree);
+    tree = NULL;
 
     // return
     return;
