@@ -81,14 +81,14 @@ cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = asd_new($1.v
                 | TK_IDENTIFICADOR '=' '>' tipo { $$ = asd_new($1.value); }; 
 
 // parâmetros
-lista_params: lista_params TK_OC_OR param  { $$ = asd_new("||"); asd_add_child($$, $1); asd_add_child($$, $3); }
-            | param { $$ = $1; };
-param: TK_IDENTIFICADOR '<' '-' tipo { $$ = asd_new($1.value); };
+lista_params: param TK_OC_OR lista_params  { $$ = NULL; }
+            | param { $$ = NULL; };
+param: TK_IDENTIFICADOR '<' '-' tipo { $$ = NULL; };
 
 // corpo
 corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
             | '{' '}' { $$ = NULL; };
-bloco_comando: bloco_comando comando  { $$ = $1;   
+bloco_comando: comando bloco_comando  { $$ = $1;   
                     // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     
                     if ($$!=NULL) {
                         asd_tree_t *last_child = $1;
@@ -130,7 +130,7 @@ chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' {
     char call[] = "call ";
     $$ = asd_new(strcat(call, $1.value)); asd_add_child($$, $3); 
 } ;
-argumentos: argumentos ',' argumento { $$ = $1; asd_add_child($$, $3); }
+argumentos: argumento ',' argumentos { $$ = $1; asd_add_child($$, $3); }
           | argumento { $$ = $1; }
 argumento: expressao { $$ = $1; };
 
