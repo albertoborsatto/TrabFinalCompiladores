@@ -16,13 +16,18 @@ int main (int argc, char **argv)
 //   return ret;
     // gcc main.c asd.c table.c stack.c -o main -Wall -g
     symbol_table table;
+    symbol_table table2;
     init_symbol_table(&table);
+    init_symbol_table(&table2);
 
     table_contents contents1 = {1, IDENTIFIER, INT, {.int_value = 42}};
     add_entry(&table, "x", contents1);
 
     table_contents contents2 = {2, FUNCTION, FLOAT, {.float_value = 3.14}};
     add_entry(&table, "y", contents2);
+
+    add_entry(&table2, "pika", contents2);
+    add_entry(&table2, "regis" ,contents1);
 
     print_table_entry(&table, 0);
 
@@ -36,15 +41,24 @@ int main (int argc, char **argv)
 
     init_table_stack(&table_stack);
     push_table_stack(&table_stack, &table);
-    symbol_table tico = pop_table_stack(&table_stack);
+    push_table_stack(&table_stack, &table2);
+    //symbol_table tico = pop_table_stack(&table_stack);
 
-    print_table_entry(&tico, 0);
+    //print_table_entry(&tico, 0);
 
-    if (search_table_value(&tico, "y")) {
-        printf("found\n");
+    // if (search_table_value(&tico, "y")) {
+    //     printf("found\n");
+    // } else {
+    //     printf("not found\n");
+    // }
+
+    if (search_stack_value(&table_stack, "y")) {
+        printf("xexenia");
     } else {
-        printf("not found\n");
+        printf("rola");
     }
+
+
 
     //free_symbol_table(&table);
     return 0;

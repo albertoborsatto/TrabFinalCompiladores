@@ -13,5 +13,6 @@ void init_table_stack(table_stack *stack);
 void push_table_stack(table_stack *stack, symbol_table *table);
 symbol_table pop_table_stack(table_stack *stack);
 void free_table_stack(table_stack *stack);
+int search_stack_value(table_stack *stack, char *value);
 
 #endif

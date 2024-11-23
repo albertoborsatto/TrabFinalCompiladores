@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "table.h"
 
 void init_table_stack(table_stack *stack) {
     stack->tables = malloc(sizeof(symbol_table));
@@ -48,5 +49,21 @@ void free_table_stack(table_stack *stack) {
     free(stack->tables);
     stack->tables = NULL;
 }
+
+int search_stack_value(table_stack *stack, char *value) {
+    int searchResult;
+
+    for (int i = (stack->size - 1); i >= 0; i--) {
+        symbol_table table = stack->tables[i];
+        searchResult = search_table_value(&table, value);
+
+        if (searchResult == 1) {
+            return searchResult;
+        }
+    }
+
+    return searchResult;
+}
+
 
 
