@@ -25,6 +25,18 @@ void add_entry(symbol_table *table, const char *value, table_contents contents) 
     table->size++;
 }
 
+void print_table_entry(symbol_table *table, int index) {
+    // invalid index
+    if (index >= table->size || index < 0)  {
+        printf("Invalid index!\n");
+    } else {
+        printf("Entry %d:\n", index);
+        printf("\tValue: %s\n", table->entries[index].value);
+    }
+    return;
+}
+
+
 void free_symbol_table(symbol_table *table) {
     for (size_t i = 0; i < table->size; i++) {
         free(table->entries[i].value); 

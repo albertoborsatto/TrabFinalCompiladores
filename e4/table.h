@@ -14,10 +14,12 @@ typedef struct symbol_table {
     size_t capacity;
 } symbol_table;
 
-void init_symbol_table(symbol_table *table, size_t initial_capacity);
+void init_symbol_table(symbol_table *table);
 
 void add_entry(symbol_table *table, const char *value, table_contents contents);
 
 void free_symbol_table(symbol_table *table);
+
+void print_table_entry(symbol_table *table, int index);
 
 #endif 
