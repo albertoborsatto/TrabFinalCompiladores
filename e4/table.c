@@ -10,6 +10,7 @@ void init_symbol_table(symbol_table *table) {
     table->capacity = 1;
 }
 
+// make sure value is not null?
 void add_entry(symbol_table *table, const char *value, table_contents contents) {
     if (table->size >= table->capacity) {
         table->capacity *= 2;
@@ -36,6 +37,15 @@ void print_table_entry(symbol_table *table, int index) {
     return;
 }
 
+int search_table_value(symbol_table *table, char *value) {
+    for (int i = 0; i<table->size; i++) {
+        if (strcmp(table->entries[i].value, value) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 void free_symbol_table(symbol_table *table) {
     for (size_t i = 0; i < table->size; i++) {

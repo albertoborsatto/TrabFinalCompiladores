@@ -40,6 +40,12 @@ int main (int argc, char **argv)
 
     print_table_entry(&tico, 0);
 
+    if (search_table_value(&tico, "y")) {
+        printf("found\n");
+    } else {
+        printf("not found\n");
+    }
+
     //free_symbol_table(&table);
     return 0;
 }
