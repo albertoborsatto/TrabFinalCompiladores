@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "asd.h"
 #include "table.h"
+#include "stack.h"
 
 extern int yyparse(void);
 extern int yylex_destroy(void);
@@ -9,11 +10,11 @@ void *arvore = NULL;
 void exporta (void *arvore);
 int main (int argc, char **argv)
 {
-  int ret = yyparse(); 
-  exporta (arvore);
-  yylex_destroy();
-  return ret;
-/*
+//   int ret = yyparse(); 
+//   exporta (arvore);
+//   yylex_destroy();
+//   return ret;
+    // gcc main.c asd.c table.c stack.c -o main -Wall -g
     symbol_table table;
     init_symbol_table(&table);
 
@@ -31,9 +32,16 @@ int main (int argc, char **argv)
 
     printf("capacity: %ld\n", table.capacity);
 
-    free_symbol_table(&table);
+    table_stack table_stack;
+
+    init_table_stack(&table_stack);
+    push_table_stack(&table_stack, &table);
+    symbol_table tico = pop_table_stack(&table_stack);
+
+    print_table_entry(&tico, 0);
+
+    //free_symbol_table(&table);
     return 0;
-*/
 }
 
 void exporta(void *arvore)

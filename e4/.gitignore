@@ -3,6 +3,7 @@ etapa3
 lex.yy.c
 lex.yy.o
 main.o
+main
 parser.tab.c
 parser.tab.h
 parser.tab.o
