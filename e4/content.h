@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 typedef enum type_c {
-    IDENTIFIER,
+    ID,
     FUNCTION
 } type_content;
 

@@ -1,15 +1,20 @@
 %{ 
 #include <stdio.h>
 #include <string.h>
+#include "stack.h"
+
 int yylex(void);
 void yyerror (char const *mensagem);
 int get_line_number(void);
 extern void *arvore;
+extern table_stack *stack;
 %}
 
 %code requires { 
    #include "asd.h" 
    #include "valor_lexico.h"
+   #include "stack.h"
+   #include "table.h"
 }
 
 %union {
@@ -67,9 +72,15 @@ extern void *arvore;
 
 %%
 
+
 // início
-programa: lista_de_funcoes { $$ = $1; arvore = $$; asd_print_graphviz(arvore);}
+programa: cria_pilha lista_de_funcoes { $$ = $2; arvore = $$; asd_print_graphviz(arvore);}
         | /* vazio */ { $$ = NULL; arvore = $$; };
+
+
+cria_pilha: {
+    init_table_stack(stack);
+}
 
 lista_de_funcoes: funcao lista_de_funcoes { $$ = $1; asd_add_child($$, $2); }
                 | funcao { $$ = $1; };
