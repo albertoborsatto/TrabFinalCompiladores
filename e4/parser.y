@@ -53,6 +53,7 @@ extern table_stack stack;
 %type<tree> lista_params
 %type<tree> param
 %type<tree> corpo_funcao
+%type<tree> escopo
 %type<tree> bloco_comando
 %type<tree> comando
 %type<tree> variavel
@@ -113,7 +114,7 @@ cabecalho_funcao: TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo {
     table_contents contents = {$1.line_number, FUNCTION, $6, ""};
     add_entry(&current_table, $1.value, contents);
 } 
-    | TK_IDENTIFICADOR '=' abre_escopo '>' tipo {
+| TK_IDENTIFICADOR '=' abre_escopo '>' tipo {
     $$ = asd_new($1.value);
     symbol_table current_table = get_top_table(&stack);
     table_contents contents = {$1.line_number, FUNCTION, $5, ""};
@@ -126,7 +127,10 @@ lista_params: param TK_OC_OR lista_params  { $$ = NULL; }
 param: TK_IDENTIFICADOR '<' '-' tipo { $$ = NULL; };
 
 // corpo
-corpo_funcao: '{' abre_escopo bloco_comando '}' fecha_escopo { $$ = $3; }
+corpo_funcao: '{' bloco_comando '}' fecha_escopo { $$ = $2; }
+            | '{' '}' fecha_escopo { $$ = NULL; };
+
+escopo: '{' abre_escopo bloco_comando '}' fecha_escopo { $$ = $3; }
             | '{' abre_escopo '}' fecha_escopo { $$ = NULL; };
 bloco_comando: comando bloco_comando  { $$ = $1;   
                     // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     
@@ -154,7 +158,7 @@ comando:  variavel ';' { $$ = $1; }
         | chamada_funcao ';' { $$ = $1; }
         | retorno ';' { $$ = $1; }
         | controle_fluxo ';' { $$ = $1; }
-        | corpo_funcao ';' { $$ = $1; };
+        | escopo ';' { $$ = $1; };
 
 variavel: tipo lista_identificadores { $$ = $2; };
 lista_identificadores: TK_IDENTIFICADOR { $$ = NULL; }
@@ -176,9 +180,9 @@ argumento: expressao { $$ = $1; };
 
 retorno: TK_PR_RETURN expressao { $$ = asd_new("return"); asd_add_child($$, $2); };
 
-controle_fluxo: TK_PR_IF '(' expressao ')' corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); }
-                | TK_PR_IF '(' expressao ')' corpo_funcao TK_PR_ELSE corpo_funcao { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); if ($7 != NULL) asd_add_child($$, $7); }
-                | TK_PR_WHILE '(' expressao ')' corpo_funcao { $$ = asd_new("while"); asd_add_child($$, $3);  if ($5 != NULL) asd_add_child($$, $5); };
+controle_fluxo: TK_PR_IF '(' expressao ')' escopo { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); }
+                | TK_PR_IF '(' expressao ')' escopo TK_PR_ELSE escopo { $$ = asd_new("if"); asd_add_child($$, $3); if ($5 != NULL) asd_add_child($$, $5); if ($7 != NULL) asd_add_child($$, $7); }
+                | TK_PR_WHILE '(' expressao ')' escopo { $$ = asd_new("while"); asd_add_child($$, $3);  if ($5 != NULL) asd_add_child($$, $5); };
 
 // comandos ---------------------------------------------------------------
 
