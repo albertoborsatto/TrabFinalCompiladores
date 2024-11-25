@@ -15,11 +15,13 @@ extern table_stack stack;
    #include "valor_lexico.h"
    #include "stack.h"
    #include "table.h"
+   #include "content.h"
 }
 
 %union {
     valor_lexico val_lexico;
     asd_tree_t *tree;
+    type_symbol symbol_type;
 }
 
 %define parse.error verbose
@@ -42,6 +44,7 @@ extern table_stack stack;
 %token<val_lexico> TK_LIT_INT
 %token<val_lexico> TK_LIT_FLOAT
 %type<val_lexico> literal
+%type<symbol_type> tipo
 
 %type<tree> programa
 %type<tree> lista_de_funcoes
@@ -77,7 +80,12 @@ extern table_stack stack;
 programa: cria_pilha lista_de_funcoes destroi_pilha { $$ = $2; arvore = $$; asd_print_graphviz(arvore);}
         | /* vazio */ { $$ = NULL; arvore = $$; };
 
-cria_pilha: { init_table_stack(&stack); };
+cria_pilha: { 
+    init_table_stack(&stack);
+    symbol_table table;
+    init_symbol_table(&table);
+    push_table_stack(&stack, &table);   
+};
 
 destroi_pilha: { free_table_stack(&stack); };
 
@@ -102,10 +110,15 @@ funcao: cabecalho_funcao corpo_funcao { $$ = $1; if ($2 != NULL) asd_add_child($
 cabecalho_funcao: TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo {
     $$ = asd_new($1.value);
     symbol_table current_table = get_top_table(&stack);
-    table_contents contents = {$1->line_number, FUNCTION, $6->type, $1->value};
-    add_entry(&current_table, )
+    table_contents contents = {$1.line_number, FUNCTION, $6, ""};
+    add_entry(&current_table, $1.value, contents);
 } 
-                | TK_IDENTIFICADOR '=' abre_escopo '>' tipo { $$ = asd_new($1.value); }; 
+    | TK_IDENTIFICADOR '=' abre_escopo '>' tipo {
+    $$ = asd_new($1.value);
+    symbol_table current_table = get_top_table(&stack);
+    table_contents contents = {$1.line_number, FUNCTION, $5, ""};
+    add_entry(&current_table, $1.value, contents); 
+}; 
 
 // parâmetros
 lista_params: param TK_OC_OR lista_params  { $$ = NULL; }
@@ -207,8 +220,8 @@ operando: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
          | chamada_funcao { $$ = $1; } ;
 
 // ???
-tipo: TK_PR_INT 
-    | TK_PR_FLOAT
+tipo: TK_PR_INT { $$ = INT; }
+    | TK_PR_FLOAT { $$ = FLOAT; };
 
 literal: TK_LIT_FLOAT { $$ = $1; }
        | TK_LIT_INT { $$ = $1; };

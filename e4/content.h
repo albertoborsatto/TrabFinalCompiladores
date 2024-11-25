@@ -12,21 +12,15 @@ typedef enum type_c {
 
 typedef enum type_s {
     INT,
-    FLOAT
+    FLOAT,
 } type_symbol;
-
-typedef union content_value {
-    int int_value;
-    float float_value;
-} content_value;
-
 typedef struct content {
     int line_number;
     type_content content_type;
     type_symbol symbol_type;
-    content_value content;
+    char *content;
 } table_contents;
 
-table_contents create_table_content_entry(int line, type_content type_c, type_symbol type_s, content_value content_v);
+table_contents create_table_content_entry(int line, type_content type_c, type_symbol type_s, char *content_v);
 
 #endif
