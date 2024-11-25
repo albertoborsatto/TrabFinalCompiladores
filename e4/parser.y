@@ -99,7 +99,12 @@ lista_de_funcoes: funcao lista_de_funcoes { $$ = $1; asd_add_child($$, $2); }
 // função$$ = $1;
 funcao: cabecalho_funcao corpo_funcao { $$ = $1; if ($2 != NULL) asd_add_child($$, $2); };
 
-cabecalho_funcao: TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo { $$ = asd_new($1.value); } 
+cabecalho_funcao: TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo {
+    $$ = asd_new($1.value);
+    symbol_table current_table = get_top_table(&stack);
+    table_contents contents = {$1->line_number, FUNCTION, $6->type, $1->value};
+    add_entry(&current_table, )
+} 
                 | TK_IDENTIFICADOR '=' abre_escopo '>' tipo { $$ = asd_new($1.value); }; 
 
 // parâmetros
