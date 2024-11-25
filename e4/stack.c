@@ -34,6 +34,8 @@ void push_table_stack(table_stack *stack, symbol_table *table) {
 
     stack->tables[stack->size] = *table;
     stack->size++;
+
+    printf("table pushed to stack!\n");
 }
 
 void pop_table_stack(table_stack *stack) {
@@ -53,6 +55,8 @@ void pop_table_stack(table_stack *stack) {
             exit(EXIT_FAILURE);
         }
     }
+
+    printf("table popped from stack!\n");
 }
 
 void free_table_stack(table_stack *stack) {
@@ -63,6 +67,8 @@ void free_table_stack(table_stack *stack) {
 
     free(stack->tables);
     stack->tables = NULL;
+
+    printf("stack deleted!\n");
 }
 
 int search_stack_value(table_stack *stack, char *value) {
@@ -83,6 +89,21 @@ int search_stack_value(table_stack *stack, char *value) {
     }
 
     return searchResult;
+}
+
+symbol_table get_top_table(table_stack *stack) {
+    if (!stack) {
+        perror("Failed to allocate memory for table stack");
+        exit(EXIT_FAILURE);
+    }
+
+    int last_index = stack->size - 1;
+
+    symbol_table popped_table = stack->tables[last_index];
+
+    printf("top table returned!\n");
+
+    return popped_table;
 }
 
 

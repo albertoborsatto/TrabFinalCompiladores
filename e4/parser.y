@@ -74,14 +74,23 @@ extern table_stack stack;
 
 
 // início
-programa: cria_pilha lista_de_funcoes { $$ = $2; arvore = $$; asd_print_graphviz(arvore);}
+programa: cria_pilha lista_de_funcoes destroi_pilha { $$ = $2; arvore = $$; asd_print_graphviz(arvore);}
         | /* vazio */ { $$ = NULL; arvore = $$; };
 
-cria_pilha: { init_table_stack(&stack); }
+cria_pilha: { init_table_stack(&stack); };
+
+destroi_pilha: { free_table_stack(&stack); };
 
 abre_escopo: {
     symbol_table table;
     init_symbol_table(&table);
+    push_table_stack(&stack, &table);
+}
+
+fecha_escopo: {
+    symbol_table popped_table = get_top_table(&stack);
+    free_symbol_table(&popped_table);
+    pop_table_stack(&stack);
 }
 
 lista_de_funcoes: funcao lista_de_funcoes { $$ = $1; asd_add_child($$, $2); }
@@ -90,8 +99,8 @@ lista_de_funcoes: funcao lista_de_funcoes { $$ = $1; asd_add_child($$, $2); }
 // função$$ = $1;
 funcao: cabecalho_funcao corpo_funcao { $$ = $1; if ($2 != NULL) asd_add_child($$, $2); };
 
-cabecalho_funcao: TK_IDENTIFICADOR '=' lista_params '>' tipo { $$ = asd_new($1.value); } 
-                | TK_IDENTIFICADOR '=' '>' tipo { $$ = asd_new($1.value); }; 
+cabecalho_funcao: TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo { $$ = asd_new($1.value); } 
+                | TK_IDENTIFICADOR '=' abre_escopo '>' tipo { $$ = asd_new($1.value); }; 
 
 // parâmetros
 lista_params: param TK_OC_OR lista_params  { $$ = NULL; }
@@ -99,8 +108,8 @@ lista_params: param TK_OC_OR lista_params  { $$ = NULL; }
 param: TK_IDENTIFICADOR '<' '-' tipo { $$ = NULL; };
 
 // corpo
-corpo_funcao: '{' abre_escopo bloco_comando '}' { $$ = $3; }
-            | '{' '}' { $$ = NULL; };
+corpo_funcao: '{' abre_escopo bloco_comando '}' fecha_escopo { $$ = $3; }
+            | '{' abre_escopo '}' fecha_escopo { $$ = NULL; };
 bloco_comando: comando bloco_comando  { $$ = $1;   
                     // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     
                     if ($$!=NULL) {
