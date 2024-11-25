@@ -7,7 +7,7 @@ int yylex(void);
 void yyerror (char const *mensagem);
 int get_line_number(void);
 extern void *arvore;
-extern table_stack *stack;
+extern table_stack stack;
 %}
 
 %code requires { 
@@ -77,9 +77,11 @@ extern table_stack *stack;
 programa: cria_pilha lista_de_funcoes { $$ = $2; arvore = $$; asd_print_graphviz(arvore);}
         | /* vazio */ { $$ = NULL; arvore = $$; };
 
+cria_pilha: { init_table_stack(&stack); }
 
-cria_pilha: {
-    init_table_stack(stack);
+abre_escopo: {
+    symbol_table table;
+    init_symbol_table(&table);
 }
 
 lista_de_funcoes: funcao lista_de_funcoes { $$ = $1; asd_add_child($$, $2); }
@@ -97,7 +99,7 @@ lista_params: param TK_OC_OR lista_params  { $$ = NULL; }
 param: TK_IDENTIFICADOR '<' '-' tipo { $$ = NULL; };
 
 // corpo
-corpo_funcao: '{' bloco_comando '}' { $$ = $2; }
+corpo_funcao: '{' abre_escopo bloco_comando '}' { $$ = $3; }
             | '{' '}' { $$ = NULL; };
 bloco_comando: comando bloco_comando  { $$ = $1;   
                     // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     

@@ -5,13 +5,13 @@
 #include "table.h"
 
 typedef struct table_stack {
-    symbol_table *tables; // Array dinâmico de tabelas de símbolos
-    size_t size;          // Número atual de tabelas na pilha
+    symbol_table *tables; 
+    size_t size;          
 } table_stack;
 
 void init_table_stack(table_stack *stack);
 void push_table_stack(table_stack *stack, symbol_table *table);
-symbol_table pop_table_stack(table_stack *stack);
+void pop_table_stack(table_stack *stack);
 void free_table_stack(table_stack *stack);
 int search_stack_value(table_stack *stack, char *value);
 

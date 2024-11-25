@@ -9,3 +9,5 @@ parser.tab.h
 parser.tab.o
 saida
 saida.dot
+stack.o
+table.o

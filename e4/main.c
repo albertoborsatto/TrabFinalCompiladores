@@ -15,13 +15,16 @@ int main (int argc, char **argv)
     exporta (arvore);
     yylex_destroy();
     return ret;
+
+    // table_stack table_stack;
+    // init_table_stack(&table_stack);
   
     // symbol_table table;
     // symbol_table table2;
     // init_symbol_table(&table);
     // init_symbol_table(&table2);
 
-    // table_contents contents1 = {1, IDENTIFIER, INT, {.int_value = 42}};
+    // table_contents contents1 = {1, ID, INT, {.int_value = 42}};
     // add_entry(&table, "x", contents1);
 
     // table_contents contents2 = {2, FUNCTION, FLOAT, {.float_value = 3.14}};
@@ -38,9 +41,6 @@ int main (int argc, char **argv)
 
     // printf("capacity: %ld\n", table.capacity);
 
-    // table_stack table_stack;
-
-    // init_table_stack(&table_stack);
     // push_table_stack(&table_stack, &table);
     // push_table_stack(&table_stack, &table2);
     // //symbol_table tico = pop_table_stack(&table_stack);
@@ -53,16 +53,16 @@ int main (int argc, char **argv)
     // //     printf("not found\n");
     // // }
 
-    // if (search_stack_value(&table_stack, "y")) {
-    //     printf("xexenia");
+    // if (search_stack_value(&table_stack, "pikas")) {
+    //     printf("xexenia\n");
     // } else {
-    //     printf("rola");
+    //     printf("rola\n");
     // }
 
 
 
-    // //free_symbol_table(&table);
-    //return 0;
+    //free_symbol_table(&table);
+    return 0;
 }
 
 void exporta(void *arvore)
