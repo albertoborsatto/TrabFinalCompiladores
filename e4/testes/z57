@@ -10,5 +10,8 @@ teta = k <- float | l <- int > int
   int va;
   int a;
   int vc;
+
+  
+  tico(1.1, 1);
 }
 

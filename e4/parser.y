@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "stack.h"
+#include "errors.h"
 
 int yylex(void);
 void yyerror (char const *mensagem);
@@ -116,14 +117,24 @@ funcao: cabecalho_funcao corpo_funcao { $$ = $1; if ($2 != NULL) asd_add_child($
 cabecalho_funcao: TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo {
     $$ = asd_new($1.value);
     symbol_table *bottom_table = get_bottom_table(&stack);
-    table_contents contents = {$1.line_number, FUNCTION, $6, ""};
-    add_entry(bottom_table, $1.value, contents);
+    if (!search_table_value(bottom_table, $1.value)) {
+        table_contents contents = {$1.line_number, FUNCTION, $6, ""};
+        add_entry(bottom_table, $1.value, contents);
+    } else {
+        printf("%d ", $1.line_number);
+        exit(ERR_DECLARED);
+    }
 } 
 | TK_IDENTIFICADOR '=' abre_escopo '>' tipo {
     $$ = asd_new($1.value);
     symbol_table *bottom_table = get_bottom_table(&stack);
-    table_contents contents = {$1.line_number, FUNCTION, $5, ""};
-    add_entry(bottom_table, $1.value, contents);
+    if (!search_table_value(bottom_table, $1.value)) {
+        table_contents contents = {$1.line_number, FUNCTION, $5, ""};
+        add_entry(bottom_table, $1.value, contents);
+    } else {
+        printf("%d ", $1.line_number);
+        exit(ERR_DECLARED);
+    }
 }; 
 
 // parâmetros
@@ -176,6 +187,10 @@ comando:  variavel ';' { $$ = $1; }
 
 variavel: tipo lista_identificadores {
     $$ = $2;
+    // percorrer toda a tabela do topo
+    // preencher UNDEFINED com 'tipo' (SS1.value)
+    fill_type(get_top_table(&stack), $1);
+
 };
 lista_identificadores: TK_IDENTIFICADOR {
     $$ = NULL;
@@ -184,6 +199,9 @@ lista_identificadores: TK_IDENTIFICADOR {
         table_contents contents = {$1.line_number, ID, UNDEFINED, ""};
         add_entry(current_table, $1.value, contents);
         print_table_entry(current_table, current_table->size - 1); 
+    } else {
+        printf("%d ", $1.line_number);
+        exit(ERR_DECLARED);
     }
 }
 | TK_IDENTIFICADOR ',' lista_identificadores {
@@ -193,7 +211,10 @@ lista_identificadores: TK_IDENTIFICADOR {
         table_contents contents = {$1.line_number, ID, UNDEFINED, ""};
         add_entry(current_table, $1.value, contents);
         print_table_entry(current_table, current_table->size - 1); 
-    }         
+    } else {
+        printf("%d ", $1.line_number);
+        exit(ERR_DECLARED);
+    }     
 }
 | TK_IDENTIFICADOR TK_OC_LE literal {
     $$ = asd_new("<="); 
@@ -204,7 +225,10 @@ lista_identificadores: TK_IDENTIFICADOR {
         table_contents contents = {$1.line_number, ID, UNDEFINED, $3.value};
         add_entry(current_table, $1.value, contents);
         print_table_entry(current_table, current_table->size - 1); 
-    }   
+    } else {
+        printf("%d ", $1.line_number);
+        exit(ERR_DECLARED);
+    }
 }
 | TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificadores {
     $$ = asd_new("<="); 
@@ -216,17 +240,28 @@ lista_identificadores: TK_IDENTIFICADOR {
         table_contents contents = {$1.line_number, ID, UNDEFINED, $3.value};
         add_entry(current_table, $1.value, contents);
         print_table_entry(current_table, current_table->size - 1); 
-    }   
+    } else {
+        printf("%d ", $1.line_number);
+        exit(ERR_DECLARED);
+    }
 };
 
     
 atribuicao: TK_IDENTIFICADOR '=' expressao {
+    if (!search_stack_value(&stack, $1.value)){
+        printf("%d ", $1.line_number);
+        exit(ERR_UNDECLARED);
+    }
     $$ = asd_new("="); 
     asd_add_child($$, asd_new($1.value)); 
     asd_add_child($$, $3);
 };
 
 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { 
+    if (!search_stack_value(&stack, $1.value)){
+        printf("%d ", $1.line_number);
+        exit(ERR_UNDECLARED);
+    } 
     char call[] = "call ";
     $$ = asd_new(strcat(call, $1.value)); asd_add_child($$, $3); 
 } ;
@@ -275,9 +310,15 @@ expressao7: '-' expressao8 { $$ = asd_new("-"); asd_add_child($$, $2); }        
 expressao8: operando { $$ = $1; }                         /* Parênteses e operandos */
           | '(' expressao ')' { $$ = $2; };
 
-operando: TK_IDENTIFICADOR { $$ = asd_new($1.value); }
-         | literal { $$ = asd_new($1.value); }
-         | chamada_funcao { $$ = $1; } ;
+operando: TK_IDENTIFICADOR { 
+    $$ = asd_new($1.value); 
+    if (!search_stack_value(&stack, $1.value)){
+        printf("%d ", $1.line_number);
+        exit(ERR_UNDECLARED);
+    }
+}
+| literal { $$ = asd_new($1.value); }
+| chamada_funcao { $$ = $1; } ;
 
 // ???
 tipo: TK_PR_INT { $$ = INT; }

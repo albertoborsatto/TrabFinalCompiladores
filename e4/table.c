@@ -84,3 +84,13 @@ void free_symbol_table(symbol_table *table) {
     table->size = 0;
     table->capacity = 0;
 }
+
+void fill_type(symbol_table *table, type_symbol type_symbol) {
+    for (int i = 0; i < table->size; i++) {
+        if (table->entries[i].table_contents.symbol_type == UNDEFINED) {
+            table->entries[i].table_contents.symbol_type = type_symbol;
+        }
+    }
+
+    return;
+}

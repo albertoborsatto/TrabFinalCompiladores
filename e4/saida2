@@ -27,7 +27,7 @@ digraph {
   Entry 4:
   	Value: vc
   Table:
-  	Value: k | 	 Line Number: 1 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+  	Value: k | 	 Line Number: 1 |./etapa4 < ./testes/z57 > saida1	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
    	Value: l | 	 Line Number: 1 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
    	Value: va | 	 Line Number: 3 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
    	Value: a | 	 Line Number: 4 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
@@ -66,7 +66,7 @@ digraph {
   	Value: fa | 	 Line Number: 1 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
    	Value: teta | 	 Line Number: 8 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
    stack deleted!
-  x560ff1c644d0 [label="fa"];
-  x560ff1c644d0 -> x560ff1c64820 
-  x560ff1c64820 [label="teta"];
+  x61b1556ac4d0 [label="fa"];
+  x61b1556ac4d0 -> x61b1556ac820 
+  x61b1556ac820 [label="teta"];
 }
