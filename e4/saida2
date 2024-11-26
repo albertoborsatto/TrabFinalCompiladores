@@ -27,11 +27,11 @@ digraph {
   Entry 4:
   	Value: vc
   Table:
-  	Value: k | 	 Line Number: 1 |./etapa4 < ./testes/z57 > saida1	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+  	Value: k | 	 Line Number: 1 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
    	Value: l | 	 Line Number: 1 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
-   	Value: va | 	 Line Number: 3 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
-   	Value: a | 	 Line Number: 4 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
-   	Value: vc | 	 Line Number: 5 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   	Value: va | 	 Line Number: 3 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+   	Value: a | 	 Line Number: 4 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+   	Value: vc | 	 Line Number: 5 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
    table popped from stack!
   table inicialized!
   table pushed to stack!
@@ -55,18 +55,8 @@ digraph {
   RETORNO => 0
   Entry 4:
   	Value: vc
-  Table:
-  	Value: k | 	 Line Number: 8 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
-   	Value: l | 	 Line Number: 8 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
-   	Value: va | 	 Line Number: 10 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
-   	Value: a | 	 Line Number: 11 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
-   	Value: vc | 	 Line Number: 12 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
-   table popped from stack!
-  Table:
-  	Value: fa | 	 Line Number: 1 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
-   	Value: teta | 	 Line Number: 8 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
-   stack deleted!
-  x61b1556ac4d0 [label="fa"];
-  x61b1556ac4d0 -> x61b1556ac820 
-  x61b1556ac820 [label="teta"];
+  VALOR RECEBIDO => fa
+  RETORNO => 1
+  VALOR RECEBIDO => fa
+  RETORNO => 1
 }

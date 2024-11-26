@@ -22,12 +22,14 @@ void free_symbol_table(symbol_table *table);
 
 void print_table_entry(symbol_table *table, int index);
 
-int search_table_value(symbol_table *table, char *value);
+int search_table_value(symbol_table *table, char *value, int *previous_line);
 
 symbol_table_entry get_table_entry(symbol_table *table, char *value);
 
 void print_table(symbol_table *table);
 
 void fill_type(symbol_table *table, type_symbol type_symbol);
+
+void print_error(symbol_table *table, int line_number, char *value, type_content content_type, int error_code, int previous_line);
 
 #endif 

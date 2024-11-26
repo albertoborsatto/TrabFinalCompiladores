@@ -71,7 +71,7 @@ void free_table_stack(table_stack *stack) {
     printf("stack deleted!\n");
 }
 
-int search_stack_value(table_stack *stack, char *value) {
+int search_stack_value(table_stack *stack, char *value, int *previous_line) {
     if (!stack) {
         perror("Failed to allocate memory for table stack");
         exit(EXIT_FAILURE);
@@ -83,7 +83,7 @@ int search_stack_value(table_stack *stack, char *value) {
 
     for (int i = (stack->size - 1); i >= 0; i--) {
         symbol_table table = stack->tables[i];
-        searchResult = search_table_value(&table, value);
+        searchResult = search_table_value(&table, value, previous_line);
 
         if (searchResult == 1) {
             printf("RETORNO => %d\n", searchResult);
@@ -104,10 +104,11 @@ symbol_table search_stack_table(table_stack *stack, char *value) {
     printf("VALOR RECEBIDO => %s\n", value);
 
     int searchResult;
-
+    int previous_line = -1;
+    
     for (int i = (stack->size - 1); i >= 0; i--) {
         symbol_table table = stack->tables[i];
-        searchResult = search_table_value(&table, value);
+        searchResult = search_table_value(&table, value, &previous_line);
 
         if (searchResult == 1) {
             printf("RETORNO => %d\n", searchResult);

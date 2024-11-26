@@ -1,4 +1,5 @@
 #include "table.h"
+#include "error.h"
 
 void init_symbol_table(symbol_table *table) {
     table->entries = malloc(sizeof(symbol_table_entry));
@@ -73,9 +74,10 @@ symbol_table_entry get_table_entry(symbol_table *table, char *value) {
     }
 }
 
-int search_table_value(symbol_table *table, char *value) {
+int search_table_value(symbol_table *table, char *value, int *previous_line) {
     for (int i = 0; i<table->size; i++) {
         if (strcmp(table->entries[i].value, value) == 0) {
+            *previous_line = table->entries[i].table_contents.line_number;
             return 1;
         }
     }
@@ -101,4 +103,28 @@ void fill_type(symbol_table *table, type_symbol type_symbol) {
     }
 
     return;
+}
+
+void print_error(symbol_table *table, int line_number, char *value, type_content content_type, int error_code, int previous_line) {
+    const char *nature = (content_type == 0) ? "IDENTIFICADOR" : "FUNÇÃO";
+
+    switch (error_code) {
+        case 10:
+             printf(
+            "Erro semântico: O identificador '%s' (natureza: %s), referenciado na linha %d, não foi declarado\n",
+            value, nature, line_number);
+            break;
+        case 11:
+             printf(
+            "Erro semântico: O identificador '%s' (natureza: %s), declarado na linha %d, já foi declarado anteriormente na linha %d.\n",
+            value, nature, line_number, previous_line);
+            break;
+        case 20:
+            break;
+        case 21:
+            break;
+            
+    }
+
+    exit(error_code);
 }
