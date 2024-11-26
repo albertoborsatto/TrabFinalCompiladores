@@ -95,6 +95,27 @@ int search_stack_value(table_stack *stack, char *value) {
     return searchResult;
 }
 
+symbol_table search_stack_table(table_stack *stack, char *value) {
+    if (!stack) {
+        perror("Failed to allocate memory for table stack");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("VALOR RECEBIDO => %s\n", value);
+
+    int searchResult;
+
+    for (int i = (stack->size - 1); i >= 0; i--) {
+        symbol_table table = stack->tables[i];
+        searchResult = search_table_value(&table, value);
+
+        if (searchResult == 1) {
+            printf("RETORNO => %d\n", searchResult);
+            return table;
+        }
+    }
+}
+
 symbol_table* get_top_table(table_stack *stack) {
     if (!stack) {
         perror("Failed to allocate memory for table stack");

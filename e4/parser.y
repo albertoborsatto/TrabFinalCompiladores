@@ -251,6 +251,13 @@ atribuicao: TK_IDENTIFICADOR '=' expressao {
     if (!search_stack_value(&stack, $1.value)){
         printf("%d ", $1.line_number);
         exit(ERR_UNDECLARED);
+    } else {
+        symbol_table table = search_stack_table(&stack, $1.value);
+        symbol_table_entry entry = get_table_entry(&table, $1.value);
+        if (entry.table_contents.content_type != ID) {
+            printf("%d", $1.line_number);
+            exit(ERR_FUNCTION);
+        }
     }
     $$ = asd_new("="); 
     asd_add_child($$, asd_new($1.value)); 
@@ -261,7 +268,14 @@ chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' {
     if (!search_stack_value(&stack, $1.value)){
         printf("%d ", $1.line_number);
         exit(ERR_UNDECLARED);
-    } 
+    } else {
+        symbol_table table = search_stack_table(&stack, $1.value);
+        symbol_table_entry entry = get_table_entry(&table, $1.value);
+        if (entry.table_contents.content_type != FUNCTION) {
+            printf("%d", $1.line_number);
+            exit(ERR_VARIABLE);
+        }
+    }
     char call[] = "call ";
     $$ = asd_new(strcat(call, $1.value)); asd_add_child($$, $3); 
 } ;
@@ -315,6 +329,13 @@ operando: TK_IDENTIFICADOR {
     if (!search_stack_value(&stack, $1.value)){
         printf("%d ", $1.line_number);
         exit(ERR_UNDECLARED);
+    } else {
+        symbol_table table = search_stack_table(&stack, $1.value);
+        symbol_table_entry entry = get_table_entry(&table, $1.value);
+        if (entry.table_contents.content_type != ID) {
+            printf("%d", $1.line_number);
+            exit(ERR_FUNCTION);
+        }
     }
 }
 | literal { $$ = asd_new($1.value); }

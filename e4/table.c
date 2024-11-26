@@ -65,6 +65,14 @@ void print_table(symbol_table *table) {
     }
 }
 
+symbol_table_entry get_table_entry(symbol_table *table, char *value) {
+    for (int i = 0; i<table->size; i++) {
+        if (strcmp(table->entries[i].value, value) == 0) {
+            return table->entries[i];
+        }
+    }
+}
+
 int search_table_value(symbol_table *table, char *value) {
     for (int i = 0; i<table->size; i++) {
         if (strcmp(table->entries[i].value, value) == 0) {

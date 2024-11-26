@@ -11,7 +11,7 @@ teta = k <- float | l <- int > int
   int a;
   int vc;
 
-  
-  tico(1.1, 1);
+
+  if (fa) { };
 }
 

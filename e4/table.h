@@ -24,6 +24,8 @@ void print_table_entry(symbol_table *table, int index);
 
 int search_table_value(symbol_table *table, char *value);
 
+symbol_table_entry get_table_entry(symbol_table *table, char *value);
+
 void print_table(symbol_table *table);
 
 void fill_type(symbol_table *table, type_symbol type_symbol);

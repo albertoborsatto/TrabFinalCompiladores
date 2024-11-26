@@ -52,6 +52,27 @@ VALOR RECEBIDO => vc
 RETORNO => 0
 Entry 4:
 	Value: vc
-VALOR RECEBIDO => tico
-RETORNO => 0
-15 
+VALOR RECEBIDO => fa
+RETORNO => 1
+table inicialized!
+table pushed to stack!
+Table:
+table popped from stack!
+Table:
+	Value: k | 	 Line Number: 8 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+ 	Value: l | 	 Line Number: 8 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+ 	Value: va | 	 Line Number: 10 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+ 	Value: a | 	 Line Number: 11 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+ 	Value: vc | 	 Line Number: 12 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+ table popped from stack!
+Table:
+	Value: fa | 	 Line Number: 1 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
+ 	Value: teta | 	 Line Number: 8 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
+ stack deleted!
+0x59d5437194d0 [label="fa"];
+0x59d5437194d0, 0x59d543719820 
+0x59d543719820 [label="teta"];
+0x59d543719820, 0x59d543719ba0 
+0x59d543719ba0 [label="if"];
+0x59d543719ba0, 0x59d543719b10 
+0x59d543719b10 [label="fa"];
