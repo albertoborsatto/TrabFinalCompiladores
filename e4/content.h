@@ -13,6 +13,7 @@ typedef enum type_c {
 typedef enum type_s {
     INT,
     FLOAT,
+    UNDEFINED,
 } type_symbol;
 typedef struct content {
     int line_number;

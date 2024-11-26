@@ -1,0 +1,72 @@
+# Executado assim: ./output2dot.sh 
+# https://graphviz.org/doc/info/lang.html
+digraph {
+  stack inicialized!
+  table inicialized!
+  table pushed to stack!
+  table inicialized!
+  table pushed to stack!
+  VALOR RECEBIDO => k
+  RETORNO => 0
+  Entry 0:
+  	Value: k
+  VALOR RECEBIDO => l
+  RETORNO => 0
+  Entry 1:
+  	Value: l
+  VALOR RECEBIDO => va
+  RETORNO => 0
+  Entry 2:
+  	Value: va
+  VALOR RECEBIDO => a
+  RETORNO => 0
+  Entry 3:
+  	Value: a
+  VALOR RECEBIDO => vc
+  RETORNO => 0
+  Entry 4:
+  	Value: vc
+  Table:
+  	Value: k | 	 Line Number: 1 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   	Value: l | 	 Line Number: 1 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+   	Value: va | 	 Line Number: 3 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   	Value: a | 	 Line Number: 4 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   	Value: vc | 	 Line Number: 5 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   table popped from stack!
+  table inicialized!
+  table pushed to stack!
+  VALOR RECEBIDO => k
+  RETORNO => 0
+  Entry 0:
+  	Value: k
+  VALOR RECEBIDO => l
+  RETORNO => 0
+  Entry 1:
+  	Value: l
+  VALOR RECEBIDO => va
+  RETORNO => 0
+  Entry 2:
+  	Value: va
+  VALOR RECEBIDO => a
+  RETORNO => 0
+  Entry 3:
+  	Value: a
+  VALOR RECEBIDO => vc
+  RETORNO => 0
+  Entry 4:
+  	Value: vc
+  Table:
+  	Value: k | 	 Line Number: 8 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   	Value: l | 	 Line Number: 8 |	 Type Content: ID |	 Symbol Type: INT |	 Content: 
+   	Value: va | 	 Line Number: 10 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   	Value: a | 	 Line Number: 11 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   	Value: vc | 	 Line Number: 12 |	 Type Content: ID |	 Symbol Type: FLOAT |	 Content: 
+   table popped from stack!
+  Table:
+  	Value: fa | 	 Line Number: 1 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
+   	Value: teta | 	 Line Number: 8 |	 Type Content: FUNCTION |	 Symbol Type: INT |	 Content: 
+   stack deleted!
+  x560ff1c644d0 [label="fa"];
+  x560ff1c644d0 -> x560ff1c64820 
+  x560ff1c64820 [label="teta"];
+}

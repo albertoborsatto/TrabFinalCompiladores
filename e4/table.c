@@ -29,7 +29,6 @@ void add_entry(symbol_table *table, const char *value, table_contents contents) 
 }
 
 void print_table_entry(symbol_table *table, int index) {
-    // invalid index
     if (index >= table->size || index < 0)  {
         printf("Invalid index!\n");
     } else {
@@ -37,6 +36,33 @@ void print_table_entry(symbol_table *table, int index) {
         printf("\tValue: %s\n", table->entries[index].value);
     }
     return;
+}
+
+void print_table(symbol_table *table) {
+    printf("Table:\n");
+
+    for (int i = 0; i < table->size; i++) {
+        symbol_table_entry entry = table->entries[i];
+        char *content_type;
+        char *symbol_type;
+        if (entry.table_contents.content_type == 0) {
+            content_type = "ID";
+        } else {
+            content_type = "FUNCTION";
+        }
+
+        if (entry.table_contents.symbol_type == 0) {
+            symbol_type = "INT";
+        } else {
+            symbol_type = "FLOAT";
+        }
+
+        printf("\tValue: %s | ", entry.value);
+        printf("\t Line Number: %d |", entry.table_contents.line_number);
+        printf("\t Type Content: %s |", content_type);
+        printf("\t Symbol Type: %s |", symbol_type);
+        printf("\t Content: %s\n ", entry.table_contents.content);
+    }
 }
 
 int search_table_value(symbol_table *table, char *value) {

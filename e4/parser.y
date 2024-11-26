@@ -85,10 +85,14 @@ cria_pilha: {
     init_table_stack(&stack);
     symbol_table table;
     init_symbol_table(&table);
-    push_table_stack(&stack, &table);   
+    push_table_stack(&stack, &table);
 };
 
-destroi_pilha: { free_table_stack(&stack); };
+destroi_pilha: {
+    symbol_table *popped_table = get_top_table(&stack); 
+    print_table(popped_table); 
+    free_table_stack(&stack);
+};
 
 abre_escopo: {
     symbol_table table;
@@ -97,8 +101,9 @@ abre_escopo: {
 }
 
 fecha_escopo: {
-    symbol_table popped_table = get_top_table(&stack);
-    free_symbol_table(&popped_table);
+    symbol_table *popped_table = get_top_table(&stack);
+    print_table(popped_table);
+    free_symbol_table(popped_table);
     pop_table_stack(&stack);
 }
 
@@ -110,21 +115,29 @@ funcao: cabecalho_funcao corpo_funcao { $$ = $1; if ($2 != NULL) asd_add_child($
 
 cabecalho_funcao: TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo {
     $$ = asd_new($1.value);
-    symbol_table current_table = get_top_table(&stack);
+    symbol_table *bottom_table = get_bottom_table(&stack);
     table_contents contents = {$1.line_number, FUNCTION, $6, ""};
-    add_entry(&current_table, $1.value, contents);
+    add_entry(bottom_table, $1.value, contents);
 } 
 | TK_IDENTIFICADOR '=' abre_escopo '>' tipo {
     $$ = asd_new($1.value);
-    symbol_table current_table = get_top_table(&stack);
+    symbol_table *bottom_table = get_bottom_table(&stack);
     table_contents contents = {$1.line_number, FUNCTION, $5, ""};
-    add_entry(&current_table, $1.value, contents); 
+    add_entry(bottom_table, $1.value, contents);
 }; 
 
 // parâmetros
 lista_params: param TK_OC_OR lista_params  { $$ = NULL; }
             | param { $$ = NULL; };
-param: TK_IDENTIFICADOR '<' '-' tipo { $$ = NULL; };
+param: TK_IDENTIFICADOR '<' '-' tipo {
+    $$ = NULL;
+    if (!search_stack_value(&stack, $1.value)) {
+        symbol_table *current_table = get_top_table(&stack);
+        table_contents contents = {$1.line_number, ID, $4, ""};
+        add_entry(current_table, $1.value, contents); 
+        print_table_entry(current_table, current_table->size - 1); 
+    }
+};
 
 // corpo
 corpo_funcao: '{' bloco_comando '}' fecha_escopo { $$ = $2; }
@@ -160,15 +173,58 @@ comando:  variavel ';' { $$ = $1; }
         | controle_fluxo ';' { $$ = $1; }
         | escopo ';' { $$ = $1; };
 
-variavel: tipo lista_identificadores { $$ = $2; };
-lista_identificadores: TK_IDENTIFICADOR { $$ = NULL; }
-                    | TK_IDENTIFICADOR ',' lista_identificadores { $$ = $3; }
-                    | TK_IDENTIFICADOR TK_OC_LE literal { $$ = asd_new("<="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, asd_new($3.value)); }
-                    | TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificadores
-                    { $$ = asd_new("<="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, asd_new($3.value)); if ($5!=NULL) asd_add_child($$, $5); };
+
+variavel: tipo lista_identificadores {
+    $$ = $2;
+};
+lista_identificadores: TK_IDENTIFICADOR {
+    $$ = NULL;
+    if (!search_stack_value(&stack, $1.value)) {
+        symbol_table *current_table = get_top_table(&stack);
+        table_contents contents = {$1.line_number, ID, UNDEFINED, ""};
+        add_entry(current_table, $1.value, contents);
+        print_table_entry(current_table, current_table->size - 1); 
+    }
+}
+| TK_IDENTIFICADOR ',' lista_identificadores {
+    $$ = $3;  
+    if (!search_stack_value(&stack, $1.value)) {
+        symbol_table *current_table = get_top_table(&stack);
+        table_contents contents = {$1.line_number, ID, UNDEFINED, ""};
+        add_entry(current_table, $1.value, contents);
+        print_table_entry(current_table, current_table->size - 1); 
+    }         
+}
+| TK_IDENTIFICADOR TK_OC_LE literal {
+    $$ = asd_new("<="); 
+    asd_add_child($$, asd_new($1.value)); 
+    asd_add_child($$, asd_new($3.value));
+    if (!search_stack_value(&stack, $1.value)) {
+        symbol_table *current_table = get_top_table(&stack);
+        table_contents contents = {$1.line_number, ID, UNDEFINED, $3.value};
+        add_entry(current_table, $1.value, contents);
+        print_table_entry(current_table, current_table->size - 1); 
+    }   
+}
+| TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificadores {
+    $$ = asd_new("<="); 
+    asd_add_child($$, asd_new($1.value)); 
+    asd_add_child($$, asd_new($3.value)); 
+    if ($5!=NULL) asd_add_child($$, $5);
+    if (!search_stack_value(&stack, $1.value)) {
+        symbol_table *current_table = get_top_table(&stack);
+        table_contents contents = {$1.line_number, ID, UNDEFINED, $3.value};
+        add_entry(current_table, $1.value, contents);
+        print_table_entry(current_table, current_table->size - 1); 
+    }   
+};
 
     
-atribuicao: TK_IDENTIFICADOR '=' expressao { $$ = asd_new("="); asd_add_child($$, asd_new($1.value)); asd_add_child($$, $3); };
+atribuicao: TK_IDENTIFICADOR '=' expressao {
+    $$ = asd_new("="); 
+    asd_add_child($$, asd_new($1.value)); 
+    asd_add_child($$, $3);
+};
 
 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' { 
     char call[] = "call ";
