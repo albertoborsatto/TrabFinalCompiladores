@@ -7,10 +7,10 @@ fa = k <- float | l <- int > int
 
 teta = k <- float | l <- int > int
 {
-  int va;
+  float va;
   int a;
-  int vc;
+  float vc;
 
-  fa = 10 + 10;
+  if(va < vc) {};
 }
 

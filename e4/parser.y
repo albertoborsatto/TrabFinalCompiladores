@@ -312,7 +312,7 @@ expressao3: expressao3 TK_OC_EQ expressao4 { $$ = asd_new("=="); asd_add_child($
           | expressao3 TK_OC_NE expressao4 { $$ = asd_new("!="); asd_add_child($$, $1); asd_add_child($$, $3); $$->type = type_infer($1->type, $3->type);}
           | expressao4 { $$ = $1; };
 
-expressao4: expressao4 '<' expressao5 { $$ = asd_new("<"); asd_add_child($$, $1); asd_add_child($$, $3); $$->type = type_infer($1->type, $3->type);}       /* Comparações de maior e menor */
+expressao4: expressao4 '<' expressao5 { $$ = asd_new("<"); asd_add_child($$, $1); asd_add_child($$, $3); $$->type = type_infer($1->type, $3->type); printf("< type: %d", $$->type);}       /* Comparações de maior e menor */
           | expressao4 '>' expressao5 { $$ = asd_new(">"); asd_add_child($$, $1); asd_add_child($$, $3); $$->type = type_infer($1->type, $3->type);}
           | expressao4 TK_OC_LE expressao5 { $$ = asd_new("<="); asd_add_child($$, $1); asd_add_child($$, $3); $$->type = type_infer($1->type, $3->type);}
           | expressao4 TK_OC_GE expressao5 { $$ = asd_new(">="); asd_add_child($$, $1); asd_add_child($$, $3); $$->type = type_infer($1->type, $3->type);}
@@ -346,7 +346,10 @@ operando: TK_IDENTIFICADOR {
         symbol_table table = search_stack_table(&stack, $1.value);
         symbol_table_entry entry = get_table_entry(&table, $1.value);
         if (entry.table_contents.content_type != ID) {
-            print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_FUNCTION, previous_line);        }
+            print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_FUNCTION, previous_line);        
+        }
+        // jogar tipo pra cima
+        $$->type = entry.table_contents.symbol_type;
     }
 }
 | literal { $$ = asd_new($1.value); }
