@@ -3,6 +3,7 @@
 #include <string.h>
 #include "stack.h"
 #include "errors.h"
+#include "util.h"
 
 int yylex(void);
 void yyerror (char const *mensagem);
@@ -17,6 +18,7 @@ extern table_stack stack;
    #include "stack.h"
    #include "table.h"
    #include "content.h"
+   #include "util.h"
 }
 
 %union {

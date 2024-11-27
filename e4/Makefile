@@ -9,6 +9,9 @@ table: table.c
 stack: stack.c
 	gcc stack.c -c
 
+util: util.c
+	gcc util.c -c
+
 asd: asd.c
 	gcc asd.c -c
 
@@ -20,5 +23,5 @@ bison: parser.y
 	bison -d parser.y
 	gcc -c parser.tab.c 
 
-etapa4: bison scanner asd stack table main  
-	gcc lex.yy.o parser.tab.o asd.o stack.o table.o main.o -o etapa4
+etapa4: bison scanner asd util stack table main  
+	gcc lex.yy.o parser.tab.o asd.o util.o stack.o table.o main.o -o etapa4
