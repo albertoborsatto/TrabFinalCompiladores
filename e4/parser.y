@@ -90,8 +90,9 @@ cria_pilha: {
 };
 
 destroi_pilha: {
-    symbol_table *popped_table = get_top_table(&stack); 
-    print_table(popped_table); 
+    symbol_table *last_table = get_top_table(&stack); 
+    print_table(last_table);
+    free_symbol_table(last_table);
     free_table_stack(&stack);
 };
 
