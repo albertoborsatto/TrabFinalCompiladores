@@ -269,6 +269,7 @@ atribuicao: TK_IDENTIFICADOR '=' expressao {
         if (entry.table_contents.content_type != ID) {
             print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_FUNCTION, previous_line);
         }
+        $$->type = entry.table_contents.symbol_type;
     }
     $$ = asd_new("="); 
     asd_add_child($$, asd_new($1.value)); 
