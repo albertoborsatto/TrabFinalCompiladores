@@ -56,4 +56,4 @@ VALOR RECEBIDO => fa
 RETORNO => 1
 VALOR RECEBIDO => fa
 RETORNO => 1
-Erro semântico: O identificador 'fa' (natureza: FUNÇÃO), declarado na linha 14, foi utilizado para referenciar uma variável
+Erro semântico: O identificador 'fa' (natureza: FUNÇÃO), declarado na linha 1, foi utilizado para referenciar uma variável na linha 14.
