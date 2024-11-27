@@ -348,11 +348,12 @@ operando: TK_IDENTIFICADOR {
     } else {
         symbol_table table = search_stack_table(&stack, $1.value);
         symbol_table_entry entry = get_table_entry(&table, $1.value);
+        type_symbol type = entry.table_contents.symbol_type;
         if (entry.table_contents.content_type != ID) {
-            print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_FUNCTION, previous_line);        
+            print_error(current_table, $1.line_number, $1.value, type, ERR_FUNCTION, previous_line);        
         }
         // jogar tipo pra cima
-        $$->type = entry.table_contents.symbol_type;
+        $$->type = type;
     }
 }
 | literal { $$ = asd_new($1.value); }
