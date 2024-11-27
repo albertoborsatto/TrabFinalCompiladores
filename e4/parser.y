@@ -264,8 +264,7 @@ atribuicao: TK_IDENTIFICADOR '=' expressao {
         symbol_table table = search_stack_table(&stack, $1.value);
         symbol_table_entry entry = get_table_entry(&table, $1.value);
         if (entry.table_contents.content_type != ID) {
-            printf("%d", $1.line_number);
-            exit(ERR_FUNCTION);
+            print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_FUNCTION, previous_line);
         }
     }
     $$ = asd_new("="); 
@@ -283,8 +282,7 @@ chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' {
         symbol_table table = search_stack_table(&stack, $1.value);
         symbol_table_entry entry = get_table_entry(&table, $1.value);
         if (entry.table_contents.content_type != FUNCTION) {
-            printf("%d", $1.line_number);
-            exit(ERR_VARIABLE);
+            print_error(current_table, $1.line_number, $1.value, ID, ERR_VARIABLE, previous_line);
         }
     }
     char call[] = "call ";
@@ -347,9 +345,7 @@ operando: TK_IDENTIFICADOR {
         symbol_table table = search_stack_table(&stack, $1.value);
         symbol_table_entry entry = get_table_entry(&table, $1.value);
         if (entry.table_contents.content_type != ID) {
-            printf("%d", $1.line_number);
-            exit(ERR_FUNCTION);
-        }
+            print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_FUNCTION, previous_line);        }
     }
 }
 | literal { $$ = asd_new($1.value); }

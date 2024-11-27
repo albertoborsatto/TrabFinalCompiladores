@@ -120,8 +120,14 @@ void print_error(symbol_table *table, int line_number, char *value, type_content
             value, nature, line_number, previous_line);
             break;
         case 20:
+            printf(
+            "Erro semântico: O identificador '%s' (natureza: %s), declarado na linha %d, foi utilizado como uma chamada de função\n",
+            value, nature, line_number);
             break;
         case 21:
+            printf(
+            "Erro semântico: O identificador '%s' (natureza: %s), declarado na linha %d, foi utilizado para referenciar uma variável\n",
+            value, nature, line_number);
             break;
             
     }

@@ -11,6 +11,6 @@ teta = k <- float | l <- int > int
   int a;
   int vc;
 
-  va = 10;
+  fa = 10;
 }
 
