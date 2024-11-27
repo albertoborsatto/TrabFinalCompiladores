@@ -1,10 +1,13 @@
 #ifndef _ARVORE_H_
 #define _ARVORE_H_
 
+#include "content.h"
+
 typedef struct asd_tree {
   char *label;
   int number_of_children;
   struct asd_tree **children;
+  type_symbol type;
 } asd_tree_t;
 
 /*

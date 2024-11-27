@@ -52,6 +52,7 @@ VALOR RECEBIDO => vc
 RETORNO => 0
 Entry 4:
 	Value: vc
+INT
 VALOR RECEBIDO => fa
 RETORNO => 1
 VALOR RECEBIDO => fa

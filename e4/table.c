@@ -134,3 +134,13 @@ void print_error(symbol_table *table, int line_number, char *value, type_content
 
     exit(error_code);
 }
+
+type_symbol type_infer(type_symbol type1, type_symbol type2) {
+    if (type1 == type2) {
+        return INT;
+    }
+
+    if (type1 == FLOAT || type2 == FLOAT) {
+        return FLOAT;
+    }
+}
