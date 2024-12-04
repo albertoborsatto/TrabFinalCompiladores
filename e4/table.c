@@ -8,8 +8,6 @@ void init_symbol_table(symbol_table *table) {
     }
     table->size = 0;
     table->capacity = 1;
-
-    printf("table inicialized!\n");
 }
 
 // make sure value is not null?

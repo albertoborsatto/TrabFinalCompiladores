@@ -9,8 +9,6 @@ void init_table_stack(table_stack *stack) {
     
     stack->tables = NULL; 
     stack->size = 0;
-
-    printf("stack inicialized!\n");
 }
 
 
@@ -34,8 +32,6 @@ void push_table_stack(table_stack *stack, symbol_table *table) {
 
     stack->tables[stack->size] = *table;
     stack->size++;
-
-    printf("table pushed to stack!\n");
 }
 
 void pop_table_stack(table_stack *stack) {
@@ -55,8 +51,6 @@ void pop_table_stack(table_stack *stack) {
             exit(EXIT_FAILURE);
         }
     }
-
-    printf("table popped from stack!\n");
 }
 
 void free_table_stack(table_stack *stack) {
@@ -67,8 +61,6 @@ void free_table_stack(table_stack *stack) {
 
     free(stack->tables);
     stack->tables = NULL;
-
-    printf("stack deleted!\n");
 }
 
 int search_stack_value(table_stack *stack, char *value, int *previous_line) {
@@ -77,8 +69,6 @@ int search_stack_value(table_stack *stack, char *value, int *previous_line) {
         exit(EXIT_FAILURE);
     }
 
-    printf("VALOR RECEBIDO => %s\n", value);
-
     int searchResult;
 
     for (int i = (stack->size - 1); i >= 0; i--) {
@@ -86,12 +76,10 @@ int search_stack_value(table_stack *stack, char *value, int *previous_line) {
         searchResult = search_table_value(&table, value, previous_line);
 
         if (searchResult == 1) {
-            printf("RETORNO => %d\n", searchResult);
             return searchResult;
         }
     }
-
-    printf("RETORNO => %d\n", searchResult);
+    
     return searchResult;
 }
 
@@ -101,8 +89,6 @@ symbol_table search_stack_table(table_stack *stack, char *value) {
         exit(EXIT_FAILURE);
     }
 
-    printf("VALOR RECEBIDO => %s\n", value);
-
     int searchResult;
     int previous_line = -1;
     
@@ -111,7 +97,6 @@ symbol_table search_stack_table(table_stack *stack, char *value) {
         searchResult = search_table_value(&table, value, &previous_line);
 
         if (searchResult == 1) {
-            printf("RETORNO => %d\n", searchResult);
             return table;
         }
     }
