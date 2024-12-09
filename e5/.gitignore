@@ -1,0 +1,17 @@
+asd.o
+etapa4
+lex.yy.c
+lex.yy.o
+main.o
+main
+parser.tab.c
+parser.tab.h
+parser.tab.o
+saida
+saida.dot
+stack.o
+table.o
+saida1
+saida2
+table.o
+stack.o
