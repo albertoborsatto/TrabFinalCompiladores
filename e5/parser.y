@@ -85,7 +85,7 @@ extern table_stack stack;
 programa 
     : cria_pilha lista_de_funcoes destroi_pilha {
         $$ = $2; 
-        arvore = $$; 
+        arvore = $$;
     }
     | { 
         $$ = NULL; 
@@ -413,9 +413,12 @@ expressao7
     : '-' expressao8 { 
         $$ = asd_new("-"); 
         asd_add_child($$, $2); 
-    }                  /* Unário, precedência mais alta */
+        $$->temp = get_temp();
+        iloc_t instr = gera_iloc("multI", $2->temp, "-1", $$->temp);
+        inserir_iloc_code(&$$->code, &instr);
+    }                  
     | '!' expressao8 { 
-        $$ = asd_new("!"); 
+        $$ = asd_new("!");
         asd_add_child($$, $2); 
     }
     | expressao8 { $$ = $1; };
@@ -436,14 +439,12 @@ operando
         } else {
             check_symbol_content_type(stack, current_table, $1->value, $1->line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
-
-        $$->temp = get_temp();
-        $$->type = $1->type;
     }
     | literal { 
         $$->temp = get_temp();
-        iloc_code_t code = gera_codigo("loadI", $1->label, $$->temp, NULL);
-
+        iloc_t instr = gera_iloc("loadI", $1->label, $$->temp, NULL);
+        inserir_iloc_code(&$$->code, &instr);
+        print_code(&$$->code);
     }
     | chamada_funcao { $$ = $1; } ;
 

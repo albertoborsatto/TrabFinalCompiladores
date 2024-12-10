@@ -2,12 +2,14 @@
 #define _ARVORE_H_
 
 #include "content.h"
+#include "iloc.h"
 
 typedef struct asd_tree {
   char *label;
   int number_of_children;
   struct asd_tree **children;
   type_symbol type;
+  iloc_code_t code;
   char *temp;
 } asd_tree_t;
 

@@ -18,6 +18,7 @@ iloc_t gera_iloc(char *mnem, char* arg1, char* arg2, char* arg3) {
 }
 
 void inserir_iloc_code(iloc_code_t* code, iloc_t* iloc) {
+    printf("entrei\n");
     if (code != NULL && iloc != NULL) {
         code->num_iloc++;
         code->iloc_instr = realloc(code->iloc_instr, code->num_iloc * sizeof(iloc_t));
