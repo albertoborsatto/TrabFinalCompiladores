@@ -23,7 +23,7 @@ extern table_stack stack;
 }
 
 %union {
-    valor_lexico val_lexico;
+    valor_lexico *val_lexico;
     asd_tree_t *tree;
     type_symbol symbol_type;
 }
@@ -83,7 +83,7 @@ extern table_stack stack;
 
 // início
 programa 
-    : cria_pilha lista_de_funcoes destroi_pilha { 
+    : cria_pilha lista_de_funcoes destroi_pilha {
         $$ = $2; 
         arvore = $$; 
     }
@@ -138,16 +138,16 @@ funcao
 
 cabecalho_funcao
     : TK_IDENTIFICADOR '=' abre_escopo lista_params '>' tipo {
-        $$ = asd_new($1.value);
+        $$ = asd_new($1->value);
 
         symbol_table *bottom_table = get_bottom_table(&stack);
-        check_table_and_add_entry(bottom_table, $1.value, $1.line_number, FUNCTION, $6, "", ERR_DECLARED);
+        check_table_and_add_entry(bottom_table, $1->value, $1->line_number, FUNCTION, $6, "", ERR_DECLARED);
     } 
     | TK_IDENTIFICADOR '=' abre_escopo '>' tipo {
-        $$ = asd_new($1.value);
+        $$ = asd_new($1->value);
         
         symbol_table *bottom_table = get_bottom_table(&stack);
-        check_table_and_add_entry(bottom_table, $1.value, $1.line_number, FUNCTION, $5, "", ERR_DECLARED);
+        check_table_and_add_entry(bottom_table, $1->value, $1->line_number, FUNCTION, $5, "", ERR_DECLARED);
     }; 
 
 // parâmetros
@@ -160,7 +160,7 @@ param
         $$ = NULL;
 
         symbol_table *current_table = get_top_table(&stack);
-        check_stack_and_add_entry(stack, current_table, $1.value, $1.line_number, ID, $4, "", ERR_DECLARED);
+        check_stack_and_add_entry(stack, current_table, $1->value, $1->line_number, ID, $4, "", ERR_DECLARED);
     };
 
 // corpo
@@ -216,45 +216,45 @@ lista_identificadores
         $$ = NULL;
         
         symbol_table *current_table = get_top_table(&stack);
-        check_table_and_add_entry(current_table, $1.value, $1.line_number, ID, UNDEFINED, "", ERR_DECLARED);
+        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, "", ERR_DECLARED);
     }
     | TK_IDENTIFICADOR ',' lista_identificadores {
         $$ = $3;
 
         symbol_table *current_table = get_top_table(&stack);
-        check_table_and_add_entry(current_table, $1.value, $1.line_number, ID, UNDEFINED, "", ERR_DECLARED);  
+        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, "", ERR_DECLARED);  
     }
     | TK_IDENTIFICADOR TK_OC_LE literal {
         $$ = asd_new("<="); 
-        asd_add_child($$, asd_new($1.value)); 
-        asd_add_child($$, asd_new($3.value));
+        asd_add_child($$, asd_new($1->value)); 
+        asd_add_child($$, asd_new($3->value));
 
         symbol_table *current_table = get_top_table(&stack);
-        check_table_and_add_entry(current_table, $1.value, $1.line_number, ID, UNDEFINED, $3.value, ERR_DECLARED);
+        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, $3->value, ERR_DECLARED);
     }
     | TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificadores {
         $$ = asd_new("<="); 
-        asd_add_child($$, asd_new($1.value)); 
-        asd_add_child($$, asd_new($3.value)); 
+        asd_add_child($$, asd_new($1->value)); 
+        asd_add_child($$, asd_new($3->value)); 
         if ($5!=NULL) asd_add_child($$, $5);
 
         symbol_table *current_table = get_top_table(&stack);
-        check_table_and_add_entry(current_table, $1.value, $1.line_number, ID, UNDEFINED, $3.value, ERR_DECLARED);
+        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, $3->value, ERR_DECLARED);
     };
 
 atribuicao
     : TK_IDENTIFICADOR '=' expressao {
         $$ = asd_new("="); 
-        asd_add_child($$, asd_new($1.value)); 
+        asd_add_child($$, asd_new($1->value)); 
         asd_add_child($$, $3);
 
         int previous_line = -1;
         symbol_table *current_table = get_top_table(&stack);
 
-        if (!search_stack_value(&stack, $1.value, &previous_line)){
-            print_error(current_table, $1.line_number, $1.value, ID, ERR_UNDECLARED, previous_line);
+        if (!search_stack_value(&stack, $1->value, &previous_line)){
+            print_error(current_table, $1->line_number, $1->value, ID, ERR_UNDECLARED, previous_line);
         } else {
-            check_symbol_content_type(stack, current_table, $1.value, $1.line_number, ID, previous_line, ERR_FUNCTION, $$);
+            check_symbol_content_type(stack, current_table, $1->value, $1->line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
     };
 
@@ -263,13 +263,13 @@ chamada_funcao
         int previous_line = -1;
         symbol_table *current_table = get_top_table(&stack);
 
-        if (!search_stack_value(&stack, $1.value, &previous_line)){
-            print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_UNDECLARED, previous_line);
+        if (!search_stack_value(&stack, $1->value, &previous_line)){
+            print_error(current_table, $1->line_number, $1->value, FUNCTION, ERR_UNDECLARED, previous_line);
         } else {
-            check_symbol_content_type(stack, current_table, $1.value, $1.line_number, FUNCTION, previous_line, ERR_VARIABLE, $$);
+            check_symbol_content_type(stack, current_table, $1->value, $1->line_number, FUNCTION, previous_line, ERR_VARIABLE, $$);
         }
         char call[] = "call ";
-        $$ = asd_new(strcat(call, $1.value)); asd_add_child($$, $3); 
+        $$ = asd_new(strcat(call, $1->value)); asd_add_child($$, $3); 
     } ;
 
 argumentos
@@ -426,26 +426,26 @@ expressao8
 
 operando
     : TK_IDENTIFICADOR { 
-        $$ = asd_new($1.value);
+        $$ = asd_new($1->value);
 
         int previous_line = -1;
         symbol_table *current_table = get_top_table(&stack);
         
-        if (!search_stack_value(&stack, $1.value, &previous_line)){
-            print_error(current_table, $1.line_number, $1.value, FUNCTION, ERR_UNDECLARED, previous_line);
+        if (!search_stack_value(&stack, $1->value, &previous_line)){
+            print_error(current_table, $1->line_number, $1->value, FUNCTION, ERR_UNDECLARED, previous_line);
         } else {
-            check_symbol_content_type(stack, current_table, $1.value, $1.line_number, ID, previous_line, ERR_FUNCTION, $$);
+            check_symbol_content_type(stack, current_table, $1->value, $1->line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
 
         $$->temp = get_temp();
-        $$->type = $1.type;
+        $$->type = $1->type;
     }
     | literal { 
-        $$ = asd_new($1.value);
+        $$ = asd_new($1->value);
 
         $$->temp = get_temp(); 
         $$->type = INT;
-        iloc_code_t code = gera_codigo("loadI", $1.value, $$->temp, NULL);
+        iloc_code_t code = gera_codigo("loadI", $1->value, $$->temp, NULL);
 
     }
     | chamada_funcao { $$ = $1; } ;
@@ -455,8 +455,10 @@ tipo
     | TK_PR_FLOAT { $$ = FLOAT; };
 
 literal
-    : TK_LIT_FLOAT { $$ = $1; }
-    | TK_LIT_INT { $$ = $1; };
+    : TK_LIT_FLOAT { 
+            $$ = $1;
+        }
+    | TK_LIT_INT { $$ = asd_new($1->value); };
 
 %%
 

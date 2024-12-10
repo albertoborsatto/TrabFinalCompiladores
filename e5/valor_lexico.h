@@ -14,6 +14,6 @@ typedef struct lex_value
     char *value;
 } valor_lexico;
 
-valor_lexico create_lex_value(int line_number, int type, char *text);
+valor_lexico *create_lex_value(int line_number, int type, char *text);
 
 #endif

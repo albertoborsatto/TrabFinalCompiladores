@@ -66,12 +66,15 @@ int get_line_number(void)
     return line_number;
 }
 
-valor_lexico create_lex_value(int line_number, int type, char *text) {
-    valor_lexico value;
-    value.line_number = line_number;
-    value.type = type;
-    value.value = text; 
-    
-    return value;
+valor_lexico* create_lex_value(int line_number, int type, char *text) {
+    valor_lexico *val = NULL;
+    val = calloc(1, sizeof(valor_lexico));
+    if (val != NULL) {
+        val->line_number = line_number;
+        val->type = type;
+        val->value = strdup(text);
+    }
+
+    return val;
 }
 
