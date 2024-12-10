@@ -19,6 +19,7 @@ extern table_stack stack;
    #include "table.h"
    #include "content.h"
    #include "util.h"
+   #include "iloc.h"
 }
 
 %union {
@@ -435,11 +436,17 @@ operando
         } else {
             check_symbol_content_type(stack, current_table, $1.value, $1.line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
+
+        $$->temp = get_temp();
+        $$->type = $1.type;
     }
     | literal { 
         $$ = asd_new($1.value);
 
         $$->temp = get_temp(); 
+        $$->type = INT;
+        iloc_code_t code = gera_codigo("loadI", $1.value, $$->temp, NULL);
+
     }
     | chamada_funcao { $$ = $1; } ;
 
