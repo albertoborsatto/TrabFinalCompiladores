@@ -1,5 +1,6 @@
 g = > int  { return 0; }
 f = > int  {
   int a;
+  a = 10 + 10;
   g(a);
 }

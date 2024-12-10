@@ -47,7 +47,7 @@ extern table_stack stack;
 %token<val_lexico> TK_IDENTIFICADOR
 %token<val_lexico> TK_LIT_INT
 %token<val_lexico> TK_LIT_FLOAT
-%type<val_lexico> literal
+%type<tree> literal
 %type<symbol_type> tipo
 
 %type<tree> programa
@@ -227,19 +227,19 @@ lista_identificadores
     | TK_IDENTIFICADOR TK_OC_LE literal {
         $$ = asd_new("<="); 
         asd_add_child($$, asd_new($1->value)); 
-        asd_add_child($$, asd_new($3->value));
+        asd_add_child($$, asd_new($3->label));
 
         symbol_table *current_table = get_top_table(&stack);
-        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, $3->value, ERR_DECLARED);
+        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, $3->label, ERR_DECLARED);
     }
     | TK_IDENTIFICADOR TK_OC_LE literal ',' lista_identificadores {
         $$ = asd_new("<="); 
         asd_add_child($$, asd_new($1->value)); 
-        asd_add_child($$, asd_new($3->value)); 
+        asd_add_child($$, asd_new($3->label)); 
         if ($5!=NULL) asd_add_child($$, $5);
 
         symbol_table *current_table = get_top_table(&stack);
-        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, $3->value, ERR_DECLARED);
+        check_table_and_add_entry(current_table, $1->value, $1->line_number, ID, UNDEFINED, $3->label, ERR_DECLARED);
     };
 
 atribuicao
@@ -441,11 +441,10 @@ operando
         $$->type = $1->type;
     }
     | literal { 
-        $$ = asd_new($1->value);
+        $$ = asd_new($1->label);
 
-        $$->temp = get_temp(); 
-        $$->type = INT;
-        iloc_code_t code = gera_codigo("loadI", $1->value, $$->temp, NULL);
+        $$->temp = get_temp();
+        iloc_code_t code = gera_codigo("loadI", $1->label, $$->temp, NULL);
 
     }
     | chamada_funcao { $$ = $1; } ;
@@ -456,9 +455,13 @@ tipo
 
 literal
     : TK_LIT_FLOAT { 
-            $$ = $1;
-        }
-    | TK_LIT_INT { $$ = asd_new($1->value); };
+        $$ = asd_new($1->value);
+        $$->type = FLOAT; 
+    }
+    | TK_LIT_INT { 
+        $$ = asd_new($1->value);
+        $$->type = INT;  
+    };
 
 %%
 
