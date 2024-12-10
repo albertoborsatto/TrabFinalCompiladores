@@ -17,4 +17,6 @@ void check_stack_and_add_entry(table_stack stack, symbol_table *table, char *val
 
 void check_symbol_content_type(table_stack stack, symbol_table *current_table, char *value, int line_number, type_content content_type, int previous_line, int error_type, asd_tree_t *tree);
 
+char* get_temp();
+
 #endif 

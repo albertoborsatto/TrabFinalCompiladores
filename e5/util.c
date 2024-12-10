@@ -1,5 +1,7 @@
 #include "util.h"
 
+int register_count = 0;
+
 void print_error(symbol_table *table, int line_number, char *value, type_content content_type, int error_code, int previous_line) {
     const char *nature = (content_type == 0) ? "IDENTIFICADOR" : "FUNÇÃO";
 
@@ -75,5 +77,20 @@ void check_symbol_content_type(table_stack stack, symbol_table *current_table, c
     if (content_type == ID) {
         tree->type = entry.table_contents.content_type;
     }
+}
+
+char* get_temp() {
+    register_count++;
+    int size = snprintf(NULL, 0, "r%d", register_count) + 1;
+    
+    char *temp = malloc(size);
+    if (temp == NULL) {
+        perror("Failed to allocate memory");
+        return NULL;
+    }
+
+    sprintf(temp, "r%d", register_count);
+
+    return temp;
 }
 

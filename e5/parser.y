@@ -436,7 +436,11 @@ operando
             check_symbol_content_type(stack, current_table, $1.value, $1.line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
     }
-    | literal { $$ = asd_new($1.value); }
+    | literal { 
+        $$ = asd_new($1.value);
+
+        $$->temp = get_temp(); 
+    }
     | chamada_funcao { $$ = $1; } ;
 
 tipo

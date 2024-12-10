@@ -8,6 +8,7 @@ typedef struct asd_tree {
   int number_of_children;
   struct asd_tree **children;
   type_symbol type;
+  char *temp;
 } asd_tree_t;
 
 /*

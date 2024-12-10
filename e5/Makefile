@@ -1,4 +1,4 @@
-all: etapa4
+all: etapa5
 
 main: main.c
 	gcc main.c -c
@@ -23,5 +23,5 @@ bison: parser.y
 	bison -d parser.y
 	gcc -c parser.tab.c 
 
-etapa4: bison scanner asd util stack table main  
-	gcc lex.yy.o parser.tab.o asd.o util.o stack.o table.o main.o -o etapa4
+etapa5: bison scanner asd util stack table main  
+	gcc lex.yy.o parser.tab.o asd.o util.o stack.o table.o main.o -o etapa5
