@@ -415,7 +415,9 @@ expressao7
         asd_add_child($$, $2); 
         $$->temp = get_temp();
         iloc_t instr = gera_iloc("multI", $2->temp, "-1", $$->temp);
-        inserir_iloc_code(&$$->code, &instr);
+        inserir_iloc_code(&$2->code, &instr);
+        $$->code = $2->code;
+        print_code(&$$->code);
     }                  
     | '!' expressao8 { 
         $$ = asd_new("!");
@@ -444,7 +446,6 @@ operando
         $$->temp = get_temp();
         iloc_t instr = gera_iloc("loadI", $1->label, $$->temp, NULL);
         inserir_iloc_code(&$$->code, &instr);
-        print_code(&$$->code);
     }
     | chamada_funcao { $$ = $1; } ;
 
