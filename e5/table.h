@@ -34,4 +34,5 @@ void print_error(symbol_table *table, int line_number, char *value, type_content
 
 type_symbol type_infer(type_symbol type1, type_symbol type2);
 
+
 #endif 

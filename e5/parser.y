@@ -1,5 +1,6 @@
 %{ 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "stack.h"
 #include "errors.h"
@@ -190,6 +191,7 @@ bloco_comando
                 asd_add_child($$, $2);
             }
         }
+
     }
     | comando { $$ = $1; };
 
@@ -256,6 +258,18 @@ atribuicao
         } else {
             check_symbol_content_type(stack, current_table, $1->value, $1->line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
+
+        $$->code = $3->code;
+        char *aux_temp = get_temp(); 
+        symbol_table_entry table_entry = get_table_entry(current_table, $1->value);
+        $$->type = table_entry.table_contents.symbol_type; 
+        int offset = table_entry.table_contents.offset;
+        char str_offset[20];  
+        toString(str_offset, offset);  
+        iloc_code_t code = gera_codigo("loadI", str_offset, aux_temp, NULL); 
+        iloc_code_t code2 = gera_codigo("store", $3->temp, aux_temp, NULL);
+        concat_code(&code, &code2);
+        concat_code(&$$->code, &code);
     };
 
 chamada_funcao
@@ -294,14 +308,65 @@ controle_fluxo
         asd_add_child($$, $3); 
         if ($5 != NULL) 
             asd_add_child($$, $5); 
+
+        $$->code = $3->code;
+        char *label = get_label();
+        char *label2 = get_label();
+
+        iloc_code_t code = gera_codigo("cbr", $3->temp, label, label2);
+        iloc_code_t code2 = gera_codigo(label, NULL, NULL, NULL);
+        concat_code(&code, &code2);
+        
+        if ($5 != NULL) {
+            concat_code(&code, &$5->code);
+        }
+        concat_code(&$$->code, &code);
+        iloc_code_t code3 = gera_codigo("jumpI", label2, NULL, NULL);
+        iloc_code_t code4 = gera_codigo(label2, NULL, NULL, NULL);
+        concat_code(&code3, &code4);
+        concat_code(&$$->code, &code3);
+        print_code(&$$->code);
     }
     | TK_PR_IF '(' expressao ')' escopo TK_PR_ELSE escopo { 
-        $$ = asd_new("if"); 
+        $$ = asd_new("if_else");
         asd_add_child($$, $3); 
         if ($5 != NULL) 
             asd_add_child($$, $5); 
         if ($7 != NULL) 
             asd_add_child($$, $7); 
+
+        $$->code = $3->code;
+        char *label_if_true = get_label();
+        char *label_else = get_label();
+        char *label_end = get_label();
+
+        // Gera código para o desvio condicional
+        iloc_code_t code_if = gera_codigo("cbr", $3->temp, label_if_true, label_else);
+        concat_code(&$$->code, &code_if);
+
+        // Código do bloco `if`
+        iloc_code_t code_label_if = gera_codigo(label_if_true, NULL, NULL, NULL);
+        concat_code(&$$->code, &code_label_if);
+        if ($5 != NULL) {
+            concat_code(&$$->code, &$5->code);
+        }
+
+        // Gera salto para o final do `if-else`
+        iloc_code_t code_jump_end = gera_codigo("jumpI", label_end, NULL, NULL);
+        concat_code(&$$->code, &code_jump_end);
+
+        // Código do bloco `else`
+        iloc_code_t code_label_else = gera_codigo(label_else, NULL, NULL, NULL);
+        concat_code(&$$->code, &code_label_else);
+        if ($7 != NULL) {
+            concat_code(&$$->code, &$7->code);
+        }
+
+        // Rótulo final
+        iloc_code_t code_label_end = gera_codigo(label_end, NULL, NULL, NULL);
+        concat_code(&$$->code, &code_label_end);
+
+        print_code(&$$->code);
     }
     | TK_PR_WHILE '(' expressao ')' escopo { 
         $$ = asd_new("while"); 
@@ -318,7 +383,9 @@ expressao
         $$ = asd_new("||"); 
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
-        $$->type = type_infer($1->type, $3->type); 
+        $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("or", $1, $3, $$->temp);
     }
     | expressao2 { $$ = $1; }; /* OR tem menor precedência */
 
@@ -328,6 +395,8 @@ expressao2
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("and", $1, $3, $$->temp);
     }
     | expressao3 { $$ = $1; }; /* AND tem precedência maior que OR */
 
@@ -337,12 +406,18 @@ expressao3
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("cmp_EQ", $1, $3, $$->temp);
+        
     }  /* Comparações de igualdade e desigualdade */
     | expressao3 TK_OC_NE expressao4 { 
         $$ = asd_new("!="); 
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("cmp_NE", $1, $3, $$->temp);
+        
     }
     | expressao4 { $$ = $1; };
 
@@ -352,24 +427,36 @@ expressao4
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type); 
+        $$->temp = get_temp();
+        $$->code = gera_aritm("cmp_GT", $1, $3, $$->temp);
+        
     }       /* Comparações de maior e menor */
     | expressao4 '>' expressao5 { 
         $$ = asd_new(">"); 
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("cmp_GT", $1, $3, $$->temp);
+        
     }
     | expressao4 TK_OC_LE expressao5 { 
         $$ = asd_new("<="); 
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("cmp_LE", $1, $3, $$->temp);
+        
     }
     | expressao4 TK_OC_GE expressao5 { 
         $$ = asd_new(">="); 
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("cmp_GE", $1, $3, $$->temp);
+        
     }
     | expressao5 { $$ = $1; };
 
@@ -379,12 +466,19 @@ expressao5
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("add", $1, $3, $$->temp);
+        
     }        /* Soma e subtração, associatividade à esquerda */
     | expressao5 '-' expressao6 { 
         $$ = asd_new("-"); 
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("sub", $1, $3, $$->temp);
+        
+        
     }
     | expressao6 { $$ = $1; };
 
@@ -402,6 +496,9 @@ expressao6
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
+        $$->temp = get_temp();
+        $$->code = gera_aritm("div", $1, $3, $$->temp);
+        
     }
     | expressao6 '%' expressao7 { 
         $$ = asd_new("%"); 
@@ -416,9 +513,11 @@ expressao7
         $$ = asd_new("-"); 
         asd_add_child($$, $2); 
         $$->temp = get_temp();
+        $$->type = $2->type;
         iloc_t instr = gera_iloc("multI", $2->temp, "-1", $$->temp);
         inserir_iloc_code(&$2->code, &instr);
         $$->code = $2->code;
+        
     }                  
     | '!' expressao8 { 
         $$ = asd_new("!");
@@ -442,6 +541,19 @@ operando
         } else {
             check_symbol_content_type(stack, current_table, $1->value, $1->line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
+
+        char *aux_temp = get_temp(); 
+        symbol_table_entry table_entry = get_table_entry(current_table, $1->value);
+        $$->type = table_entry.table_contents.symbol_type; 
+        int offset = table_entry.table_contents.offset;
+        char str_offset[20];  
+        toString(str_offset, offset);  
+        
+        iloc_code_t code = gera_codigo("loadI", str_offset, aux_temp, NULL); 
+        $$->temp = get_temp(); 
+        iloc_code_t code2 = gera_codigo("load", aux_temp, $$->temp, NULL);
+        concat_code(&code, &code2);
+        $$->code = code;
     }
     | literal { 
         $$->temp = get_temp();

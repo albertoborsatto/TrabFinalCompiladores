@@ -1,0 +1,15 @@
+loadI 4 r4 
+store r3 r4 
+0x5c5e3cc656c0 [label="g"];
+0x5c5e3cc656c0, 0x5c5e3cc657a0 
+0x5c5e3cc657a0 [label="f"];
+0x5c5e3cc657a0, 0x5c5e3cc65fc0 
+0x5c5e3cc65fc0 [label="="];
+0x5c5e3cc65fc0, 0x5c5e3cc66020 
+0x5c5e3cc66020 [label="b"];
+0x5c5e3cc65fc0, 0x5c5e3cc65d90 
+0x5c5e3cc65d90 [label="/"];
+0x5c5e3cc65d90, 0x5c5e3cc65b70 
+0x5c5e3cc65b70 [label="10"];
+0x5c5e3cc65d90, 0x5c5e3cc65cb0 
+0x5c5e3cc65cb0 [label="10"];

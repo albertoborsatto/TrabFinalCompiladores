@@ -19,4 +19,8 @@ void check_symbol_content_type(table_stack stack, symbol_table *current_table, c
 
 char* get_temp();
 
+char* get_label();
+
+void toString(char* str, int num);
+
 #endif 

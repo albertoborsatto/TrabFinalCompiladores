@@ -21,6 +21,7 @@ typedef struct content {
     type_content content_type;
     type_symbol symbol_type;
     char *content;
+    int offset;
 } table_contents;
 
 table_contents create_table_content_entry(int line, type_content type_c, type_symbol type_s, char *content_v);

@@ -1,6 +1,7 @@
 #include "util.h"
 
 int register_count = 0;
+int label_count = 0;
 
 void print_error(symbol_table *table, int line_number, char *value, type_content content_type, int error_code, int previous_line) {
     const char *nature = (content_type == 0) ? "IDENTIFICADOR" : "FUNÇÃO";
@@ -41,7 +42,8 @@ type_symbol type_infer(type_symbol type1, type_symbol type2) {
 }
 
 void add_symbol_entry(symbol_table *table, char *identifier, int line_number, type_content content_type, type_symbol symbol_type, char *content) {
-    table_contents contents = {line_number, content_type, symbol_type, content};
+    int variable_offset = table->size * 4;
+    table_contents contents = {line_number, content_type, symbol_type, content, variable_offset};
     add_entry(table, identifier, contents);
 }
 
@@ -92,5 +94,46 @@ char* get_temp() {
     sprintf(temp, "r%d", register_count);
 
     return temp;
+}
+
+char* get_label() {
+    label_count++;
+    int size = snprintf(NULL, 0, "l%d", label_count) + 1;
+    
+    char *temp = malloc(size);
+    if (temp == NULL) {
+        perror("Failed to allocate memory");
+        return NULL;
+    }
+
+    sprintf(temp, "l%d", label_count);
+
+    return temp;
+}
+
+void toString(char* str, int num) {
+    int i = 0, rem;
+    int len = 0;
+    int n = num;
+
+    // Calcula o comprimento do número
+    if (num == 0) {
+        len = 1;
+    } else {
+        while (n != 0) {
+            len++;
+            n /= 10;
+        }
+    }
+
+    // Preenche os dígitos no buffer
+    for (i = 0; i < len; i++) {
+        rem = num % 10;
+        num = num / 10;
+        str[len - (i + 1)] = rem + '0';
+    }
+
+    // Adiciona o caractere nulo ao final
+    str[len] = '\0';
 }
 

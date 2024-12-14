@@ -3,6 +3,14 @@ g = i <- int | j <- int | k <- int > int {
 f = > int{
     int a;
     int b;
-    int c;
-    g(a+b, a+b*c, b+c+a);
+    a = 10 / 10;
+    if (10 == 10) {
+        int a;
+        int b;
+        a = 10 / 10;
+    } else {
+        int b;
+        int a;
+        b = 10 / 10;
+    };
 }
