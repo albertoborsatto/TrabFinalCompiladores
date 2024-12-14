@@ -29,4 +29,8 @@ void print_code(iloc_code_t* code);
 
 void free_code(iloc_code_t* code);
 
+void concat_code(iloc_code_t* code1, iloc_code_t* code2);
+
+iloc_code_t gera_aritm(char *mnem, void *tree1, void *tree2, char* local);
+
 #endif //_ILOC_H_

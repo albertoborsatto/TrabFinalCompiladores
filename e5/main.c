@@ -20,6 +20,10 @@ int main (int argc, char **argv)
     // iloc_code_t code = gera_codigo("loadI", "10", "r1", NULL);
     // iloc_t instr = gera_iloc("add", "r1", "r2", "r3");
     // inserir_iloc_code(&code, &instr);
+
+    // iloc_code_t code2 = gera_codigo("ticolinha", "10", "r1", NULL);
+
+    // concat_code(&code, &code2);
     
     // printf("Generated Code:\n");
     // print_code(&code);

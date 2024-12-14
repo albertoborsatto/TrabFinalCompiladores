@@ -394,7 +394,8 @@ expressao6
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
-        
+        $$->temp = get_temp();
+        $$->code = gera_aritm("mult", $1, $3, $$->temp);
     } 
     | expressao6 '/' expressao7 { 
         $$ = asd_new("/"); 
@@ -418,7 +419,6 @@ expressao7
         iloc_t instr = gera_iloc("multI", $2->temp, "-1", $$->temp);
         inserir_iloc_code(&$2->code, &instr);
         $$->code = $2->code;
-        print_code(&$$->code);
     }                  
     | '!' expressao8 { 
         $$ = asd_new("!");
