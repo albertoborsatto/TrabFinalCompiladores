@@ -83,7 +83,7 @@ iloc_code_t gera_aritm(char *mnem, void *tree1, void *tree2, char* local) {
 
     memcpy(arit_code.iloc_instr, asd1->code.iloc_instr, asd1->code.num_iloc * sizeof(iloc_t));
 
-    iloc_t new_instr = gera_iloc(mnem, asd1->label, asd2->label, local);
+    iloc_t new_instr = gera_iloc(mnem, asd1->temp, asd2->temp, local);
     inserir_iloc_code(&arit_code, &new_instr);
 
     print_code(&arit_code);

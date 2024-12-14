@@ -32,4 +32,4 @@ $(BUILD_DIR)/parser.tab.o: parser.y | $(BUILD_DIR)
 	gcc -c parser.tab.c -o $(BUILD_DIR)/parser.tab.o
 
 etapa5: $(BUILD_DIR)/parser.tab.o $(BUILD_DIR)/lex.yy.o $(BUILD_DIR)/asd.o $(BUILD_DIR)/util.o $(BUILD_DIR)/iloc.o $(BUILD_DIR)/stack.o $(BUILD_DIR)/table.o $(BUILD_DIR)/main.o
-	gcc $(BUILD_DIR)/lex.yy.o $(BUILD_DIR)/parser.tab.o $(BUILD_DIR)/asd.o $(BUILD_DIR)/util.o $(BUILD_DIR)/iloc.o $(BUILD_DIR)/stack.o $(BUILD_DIR)/table.o $(BUILD_DIR)/main.o -o $(BUILD_DIR)/etapa5
+	gcc $(BUILD_DIR)/lex.yy.o $(BUILD_DIR)/parser.tab.o $(BUILD_DIR)/asd.o $(BUILD_DIR)/util.o $(BUILD_DIR)/iloc.o $(BUILD_DIR)/stack.o $(BUILD_DIR)/table.o $(BUILD_DIR)/main.o -o etapa5
