@@ -394,7 +394,8 @@ expressao6
         asd_add_child($$, $1); 
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
-    } /* Multiplicação, divisão e módulo, associatividade à esquerda */
+        
+    } 
     | expressao6 '/' expressao7 { 
         $$ = asd_new("/"); 
         asd_add_child($$, $1); 
@@ -469,4 +470,3 @@ void yyerror (char const *mensagem)
 {
     fprintf(stderr, "%s - line %d\n", mensagem, get_line_number());
 }
-

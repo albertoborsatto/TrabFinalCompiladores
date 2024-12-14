@@ -1,30 +1,35 @@
-all: etapa5
+BUILD_DIR = build
 
-main: main.c
-	gcc main.c -c
+all: $(BUILD_DIR) etapa5
 
-table: table.c
-	gcc table.c -c
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
-stack: stack.c
-	gcc stack.c -c
+$(BUILD_DIR)/main.o: main.c | $(BUILD_DIR)
+	gcc main.c -c -o $(BUILD_DIR)/main.o
 
-iloc: iloc.c
-	gcc iloc.c -c
+$(BUILD_DIR)/table.o: table.c | $(BUILD_DIR)
+	gcc table.c -c -o $(BUILD_DIR)/table.o
 
-util: util.c
-	gcc util.c -c
+$(BUILD_DIR)/stack.o: stack.c | $(BUILD_DIR)
+	gcc stack.c -c -o $(BUILD_DIR)/stack.o
 
-asd: asd.c
-	gcc asd.c -c
+$(BUILD_DIR)/iloc.o: iloc.c | $(BUILD_DIR)
+	gcc iloc.c -c -o $(BUILD_DIR)/iloc.o
 
-scanner: scanner.l
+$(BUILD_DIR)/util.o: util.c | $(BUILD_DIR)
+	gcc util.c -c -o $(BUILD_DIR)/util.o
+
+$(BUILD_DIR)/asd.o: asd.c | $(BUILD_DIR)
+	gcc asd.c -c -o $(BUILD_DIR)/asd.o
+
+$(BUILD_DIR)/lex.yy.o: scanner.l | $(BUILD_DIR)
 	flex scanner.l
-	gcc -c lex.yy.c 
-	
-bison: parser.y
-	bison -d parser.y
-	gcc -c parser.tab.c 
+	gcc -c lex.yy.c -o $(BUILD_DIR)/lex.yy.o
 
-etapa5: bison scanner asd util iloc stack table main  
-	gcc lex.yy.o parser.tab.o asd.o util.o iloc.o stack.o table.o main.o -o etapa5
+$(BUILD_DIR)/parser.tab.o: parser.y | $(BUILD_DIR)
+	bison -d parser.y
+	gcc -c parser.tab.c -o $(BUILD_DIR)/parser.tab.o
+
+etapa5: $(BUILD_DIR)/parser.tab.o $(BUILD_DIR)/lex.yy.o $(BUILD_DIR)/asd.o $(BUILD_DIR)/util.o $(BUILD_DIR)/iloc.o $(BUILD_DIR)/stack.o $(BUILD_DIR)/table.o $(BUILD_DIR)/main.o
+	gcc $(BUILD_DIR)/lex.yy.o $(BUILD_DIR)/parser.tab.o $(BUILD_DIR)/asd.o $(BUILD_DIR)/util.o $(BUILD_DIR)/iloc.o $(BUILD_DIR)/stack.o $(BUILD_DIR)/table.o $(BUILD_DIR)/main.o -o $(BUILD_DIR)/etapa5
