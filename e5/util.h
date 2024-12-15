@@ -21,6 +21,6 @@ char* get_temp();
 
 char* get_label();
 
-void toString(char* str, int num);
+void int_to_string(char* str, int num);
 
 #endif 

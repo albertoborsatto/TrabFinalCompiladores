@@ -82,7 +82,6 @@ void check_symbol_content_type(table_stack stack, symbol_table *current_table, c
 }
 
 char* get_temp() {
-    register_count++;
     int size = snprintf(NULL, 0, "r%d", register_count) + 1;
     
     char *temp = malloc(size);
@@ -93,12 +92,12 @@ char* get_temp() {
 
     sprintf(temp, "r%d", register_count);
 
+    register_count++;
     return temp;
 }
 
 char* get_label() {
-    label_count++;
-    int size = snprintf(NULL, 0, "l%d", label_count) + 1;
+    int size = snprintf(NULL, 0, "L%d", label_count) + 1;
     
     char *temp = malloc(size);
     if (temp == NULL) {
@@ -106,12 +105,13 @@ char* get_label() {
         return NULL;
     }
 
-    sprintf(temp, "l%d", label_count);
+    sprintf(temp, "L%d", label_count);
 
+    label_count++;
     return temp;
 }
 
-void toString(char* str, int num) {
+void int_to_string(char* str, int num) {
     int i = 0, rem;
     int len = 0;
     int n = num;

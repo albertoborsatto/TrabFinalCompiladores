@@ -268,7 +268,7 @@ atribuicao
         $$->type = table_entry.table_contents.symbol_type; 
         int offset = table_entry.table_contents.offset;
         char str_offset[20];  
-        toString(str_offset, offset);  
+        int_to_string(str_offset, offset);  
         iloc_code_t code = gera_codigo("loadI", str_offset, aux_temp, NULL); 
         iloc_code_t code2 = gera_codigo("store", $3->temp, aux_temp, NULL);
         concat_code(&code, &code2);
@@ -314,7 +314,6 @@ controle_fluxo
 
         $$->code = $3->code;
 
-
         char *label = get_label();
         char *label2 = get_label();
 
@@ -342,34 +341,28 @@ controle_fluxo
             asd_add_child($$, $7); 
 
         $$->code = $3->code;
+
         char *label_if_true = get_label();
         char *label_else = get_label();
         char *label_end = get_label();
 
-        // Gera código para o desvio condicional
-        iloc_code_t code_if = gera_codigo("cbr", $3->temp, label_if_true, label_else);
-        concat_code(&$$->code, &code_if);
+        iloc_code_t code_if = gera_codigo("cbr", $3->temp, label_if_true, label_else); 
+        iloc_code_t code_label_if = gera_codigo(label_if_true, NULL, NULL, NULL);     
+        iloc_code_t code_jump_end = gera_codigo("jumpI", label_end, NULL, NULL);      
+        iloc_code_t code_label_else = gera_codigo(label_else, NULL, NULL, NULL);      
+        iloc_code_t code_label_end = gera_codigo(label_end, NULL, NULL, NULL);        
 
-        // Código do bloco `if`
-        iloc_code_t code_label_if = gera_codigo(label_if_true, NULL, NULL, NULL);
+        
+        concat_code(&$$->code, &code_if);
         concat_code(&$$->code, &code_label_if);
         if ($5 != NULL) {
             concat_code(&$$->code, &$5->code);
         }
-
-        // Gera salto para o final do `if-else`
-        iloc_code_t code_jump_end = gera_codigo("jumpI", label_end, NULL, NULL);
         concat_code(&$$->code, &code_jump_end);
-
-        // Código do bloco `else`
-        iloc_code_t code_label_else = gera_codigo(label_else, NULL, NULL, NULL);
         concat_code(&$$->code, &code_label_else);
         if ($7 != NULL) {
             concat_code(&$$->code, &$7->code);
         }
-
-        // Rótulo final
-        iloc_code_t code_label_end = gera_codigo(label_end, NULL, NULL, NULL);
         concat_code(&$$->code, &code_label_end);
 
     }
@@ -377,7 +370,28 @@ controle_fluxo
         $$ = asd_new("while"); 
         asd_add_child($$, $3);  
         if ($5 != NULL) 
-            asd_add_child($$, $5); 
+            asd_add_child($$, $5);
+        
+        $$->code = $3->code;
+
+        char *label = get_label();
+        char *label2 = get_label();
+        char *label3 = get_label();
+
+        iloc_code_t label_code = gera_codigo(label, NULL, NULL, NULL);
+        iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label2, label3);
+        iloc_code_t label_code2 = gera_codigo(label2, NULL, NULL, NULL);
+        iloc_code_t jump_code = gera_codigo("jumpI", label, NULL, NULL);
+        iloc_code_t label_code3 = gera_codigo(label3, NULL, NULL, NULL);
+
+        concat_code(&label_code, &cond_code);
+        concat_code(&label_code, &label_code2);
+        if ($5 != NULL) {
+            concat_code(&label_code, &$5->code);
+        }
+        concat_code(&label_code, &jump_code);
+        concat_code(&label_code, &label_code3);
+        concat_code(&$$->code, &label_code);
     };
 
 // comandos ---------------------------------------------------------------
@@ -553,7 +567,7 @@ operando
         $$->type = table_entry.table_contents.symbol_type; 
         int offset = table_entry.table_contents.offset;
         char str_offset[20];  
-        toString(str_offset, offset);  
+        int_to_string(str_offset, offset);  
         
         iloc_code_t code = gera_codigo("loadI", str_offset, aux_temp, NULL); 
         $$->temp = get_temp(); 

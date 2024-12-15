@@ -1,19 +1,25 @@
 f = > int{
-    int a;
-    int b;
-    a = 10 + 10;
-    a = 10 / 10;
-    b = -a;
+    int j;
 
-    if (10 == 10) {
-        int b, a;
+    j = 12;
 
-        b = 5 / 5;
-        a = b;
-    } else {
-        int b, a;
+    while (10 == 10) {
+        int a;
+        int b;
 
-        a = 5 / 5;
+        a = 10 / 10;
         b = -a;
+    };
+
+    int c, a;
+
+    if (c >= a) {
+        int d;
+
+        d = 12 * 10;
+    } else {
+        int d;
+
+        d = 10 * 12;
     };
 }
