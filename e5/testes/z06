@@ -1,16 +1,19 @@
-g = i <- int | j <- int | k <- int > int {
-}
 f = > int{
     int a;
     int b;
+    a = 10 + 10;
     a = 10 / 10;
+    b = -a;
+
     if (10 == 10) {
-        int a;
-        int b;
-        a = 10 / 10;
+        int b, a;
+
+        b = 5 / 5;
+        a = b;
     } else {
-        int b;
-        int a;
-        b = 10 / 10;
+        int b, a;
+
+        a = 5 / 5;
+        b = -a;
     };
 }

@@ -135,6 +135,7 @@ funcao
         $$ = $1; 
         if ($2 != NULL) 
             asd_add_child($$, $2); 
+        print_code(&$2->code);
     };
 
 cabecalho_funcao
@@ -175,9 +176,11 @@ escopo
 
 bloco_comando
     : comando bloco_comando { 
-        $$ = $1;   
+        $$ = $1;
+        
         // trata caso em que comando subsequente a uma lista de declarações seria filha da primeira declaração     
         if ($$!=NULL) {
+            concat_code(&$$->code, &$2->code); 
             asd_tree_t *last_child = $1;
             while(last_child->number_of_children == 3) {
                 last_child = last_child->children[last_child->number_of_children-1];
@@ -191,7 +194,7 @@ bloco_comando
                 asd_add_child($$, $2);
             }
         }
-
+        
     }
     | comando { $$ = $1; };
 
@@ -304,28 +307,31 @@ retorno
 
 controle_fluxo
     : TK_PR_IF '(' expressao ')' escopo { 
-        $$ = asd_new("if"); 
-        asd_add_child($$, $3); 
+        $$ = asd_new("if");
+        asd_add_child($$, $3);
         if ($5 != NULL) 
-            asd_add_child($$, $5); 
+            asd_add_child($$, $5);
 
         $$->code = $3->code;
+
+
         char *label = get_label();
         char *label2 = get_label();
 
-        iloc_code_t code = gera_codigo("cbr", $3->temp, label, label2);
-        iloc_code_t code2 = gera_codigo(label, NULL, NULL, NULL);
-        concat_code(&code, &code2);
-        
+        iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label, label2);
+        iloc_code_t label_code1 = gera_codigo(label, NULL, NULL, NULL);
+        iloc_code_t jump_code = gera_codigo("jumpI", label2, NULL, NULL);
+        iloc_code_t label_code2 = gera_codigo(label2, NULL, NULL, NULL);
+
+        concat_code(&cond_code, &label_code1);
+
         if ($5 != NULL) {
-            concat_code(&code, &$5->code);
+            concat_code(&cond_code, &$5->code);
         }
-        concat_code(&$$->code, &code);
-        iloc_code_t code3 = gera_codigo("jumpI", label2, NULL, NULL);
-        iloc_code_t code4 = gera_codigo(label2, NULL, NULL, NULL);
-        concat_code(&code3, &code4);
-        concat_code(&$$->code, &code3);
-        print_code(&$$->code);
+
+        concat_code(&cond_code, &jump_code);
+        concat_code(&cond_code, &label_code2);
+        concat_code(&$$->code, &cond_code);
     }
     | TK_PR_IF '(' expressao ')' escopo TK_PR_ELSE escopo { 
         $$ = asd_new("if_else");
@@ -366,7 +372,6 @@ controle_fluxo
         iloc_code_t code_label_end = gera_codigo(label_end, NULL, NULL, NULL);
         concat_code(&$$->code, &code_label_end);
 
-        print_code(&$$->code);
     }
     | TK_PR_WHILE '(' expressao ')' escopo { 
         $$ = asd_new("while"); 
@@ -510,6 +515,7 @@ expressao6
 
 expressao7
     : '-' expressao8 { 
+        
         $$ = asd_new("-"); 
         asd_add_child($$, $2); 
         $$->temp = get_temp();
