@@ -135,7 +135,7 @@ funcao
         $$ = $1; 
         if ($2 != NULL) 
             asd_add_child($$, $2); 
-        print_code(&$2->code);
+        
     };
 
 cabecalho_funcao
@@ -167,7 +167,7 @@ param
 
 // corpo
 corpo_funcao
-    : '{' bloco_comando '}' fecha_escopo { $$ = $2; }
+    : '{' bloco_comando '}' fecha_escopo { $$ = $2; print_code(&$2->code); }
     | '{' '}' fecha_escopo { $$ = NULL; };
 
 escopo
@@ -541,7 +541,23 @@ expressao7
     }                  
     | '!' expressao8 { 
         $$ = asd_new("!");
-        asd_add_child($$, $2); 
+        asd_add_child($$, $2);
+
+        $$->type = $2->type;
+
+        concat_code(&$$->code, &$2->code);
+        // load expression into register
+        char *intermed_reg = get_temp();
+        iloc_code_t load_code = gera_codigo("load", $2->temp, intermed_reg, NULL);
+        // load 0xFFFFFFFF into register
+        char *intermed_reg2 = get_temp();
+        iloc_code_t loadI_code = gera_codigo("loadI", "0xFFFFFFFF", intermed_reg2, NULL);
+        // perform xor with both and save in register
+        $$->temp = get_temp();
+        iloc_code_t xor_code = gera_codigo("xor", intermed_reg, intermed_reg2, $$->temp);
+        concat_code(&load_code, &loadI_code);
+        concat_code(&load_code, &xor_code);
+        concat_code(&$$->code, &load_code);
     }
     | expressao8 { $$ = $1; };
 

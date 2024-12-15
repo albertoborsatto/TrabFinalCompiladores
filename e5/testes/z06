@@ -8,7 +8,7 @@ f = > int{
         int b;
 
         a = 10 / 10;
-        b = -a;
+        b = !a;
     };
 
     int c, a;
