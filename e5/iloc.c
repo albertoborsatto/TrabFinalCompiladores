@@ -48,6 +48,7 @@ void concat_code(iloc_code_t* code1, iloc_code_t* code2) {
 
 void iloc_op_new(char* mnem, char* arg1, char* arg2, char* arg3, enum op_type type)
 {
+    
     switch (type) {
         case left:
             printf("%s ", mnem);
@@ -107,11 +108,7 @@ void print_code(iloc_code_t* code) {
         char *arg2 = code->iloc_instr[i].arg2 ? code->iloc_instr[i].arg2 : "";
         char *arg3 = code->iloc_instr[i].arg3 ? code->iloc_instr[i].arg3 : "";
         enum op_type type = code->iloc_instr[i].type;
-        // printf("%s %s %s %s\n", 
-        //     code->iloc_instr[i].mnem, 
-        //     code->iloc_instr[i].arg1 ? code->iloc_instr[i].arg1 : "",
-        //     code->iloc_instr[i].arg2 ? code->iloc_instr[i].arg2 : "",
-        //     code->iloc_instr[i].arg3 ? code->iloc_instr[i].arg3 : "");
+        
         iloc_op_new(code->iloc_instr[i].mnem, arg1, arg2, arg3, type);
     }
 }

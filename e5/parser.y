@@ -372,8 +372,6 @@ controle_fluxo
         if ($5 != NULL) 
             asd_add_child($$, $5);
         
-        $$->code = $3->code;
-
         char *label1 = get_label();
         char *label2 = get_label();
         char *label3 = get_label();
@@ -384,6 +382,7 @@ controle_fluxo
         iloc_code_t jump_code = gera_codigo("jumpI", label1, NULL, NULL, jump);
         iloc_code_t label_code3 = gera_codigo(strcat_return(label3, ":"), NULL, NULL, NULL, label);
 
+        concat_code(&label_code, &$3->code);
         concat_code(&label_code, &cond_code);
         concat_code(&label_code, &label_code2);
         if ($5 != NULL) {
