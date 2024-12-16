@@ -2,20 +2,21 @@
 #include "asd.h"
 #include "util.h"
 
-iloc_code_t gera_codigo(char *mnem, char* arg1, char* arg2, char* arg3) {
+iloc_code_t gera_codigo(char *mnem, char* arg1, char* arg2, char* arg3, enum op_type type) {
     iloc_code_t code;
     code.num_iloc = 1;
     code.iloc_instr = malloc(sizeof(iloc_t));
-    code.iloc_instr[0] = gera_iloc(mnem, arg1, arg2, arg3);
+    code.iloc_instr[0] = gera_iloc(mnem, arg1, arg2, arg3, type);
     return code;
 }
 
-iloc_t gera_iloc(char *mnem, char* arg1, char* arg2, char* arg3) {
+iloc_t gera_iloc(char *mnem, char* arg1, char* arg2, char* arg3, enum op_type type) {
     iloc_t instr;
     instr.mnem = strdup(mnem);
     instr.arg1 = arg1 ? strdup(arg1) : NULL;
     instr.arg2 = arg2 ? strdup(arg2) : NULL;
     instr.arg3 = arg3 ? strdup(arg3) : NULL;
+    instr.type = type;
     return instr;
 }
 
@@ -45,17 +46,73 @@ void concat_code(iloc_code_t* code1, iloc_code_t* code2) {
     // TODO: tratar caso em que code1 é NULL
 }
 
+void iloc_op_new(char* mnem, char* arg1, char* arg2, char* arg3, enum op_type type)
+{
+    switch (type) {
+        case left:
+            printf("%s ", mnem);
+            printf("%s", arg1);
+            if (strlen(arg2) > 0) {
+                printf(", %s", arg2);
+            }
+            printf(" => ");
+            if (strlen(arg3) > 0) {
+                printf("%s", arg3);
+            }
+            printf("\n");
+            break;
+
+        case right:
+            printf("%s ", mnem);
+            printf("%s", arg1);
+            printf(" => %s", arg2);
+            if (strlen(arg3) > 0) {
+                printf(", %s", arg3);
+            }
+            printf("\n");
+            break;
+
+        case cmp:
+            printf("%s ", mnem);
+            if (strlen(arg1) > 0) {
+                printf("%s, ", arg1);
+            }
+            if (strlen(arg2) > 0) {
+                printf("%s", arg2);
+            }
+            printf(" -> %s\n", arg3);
+            break;
+
+        case cbr:
+            printf("%s %s -> %s, %s\n", mnem, arg1, arg2, arg3);
+            break;
+
+        case jump:
+            printf("%s -> %s\n", mnem, arg1);
+            break;
+
+        case label:
+            printf("%s\n", mnem);
+            break;
+    }
+}
+
 void print_code(iloc_code_t* code) {
     if (code == NULL || code->iloc_instr == NULL) {
         printf("Code is empty\n");
         return;
     }
     for (int i = 0; i < code->num_iloc; i++) {
-        printf("%s %s %s %s\n", 
-            code->iloc_instr[i].mnem, 
-            code->iloc_instr[i].arg1 ? code->iloc_instr[i].arg1 : "",
-            code->iloc_instr[i].arg2 ? code->iloc_instr[i].arg2 : "",
-            code->iloc_instr[i].arg3 ? code->iloc_instr[i].arg3 : "");
+        char *arg1 = code->iloc_instr[i].arg1 ? code->iloc_instr[i].arg1 : ""; 
+        char *arg2 = code->iloc_instr[i].arg2 ? code->iloc_instr[i].arg2 : "";
+        char *arg3 = code->iloc_instr[i].arg3 ? code->iloc_instr[i].arg3 : "";
+        enum op_type type = code->iloc_instr[i].type;
+        // printf("%s %s %s %s\n", 
+        //     code->iloc_instr[i].mnem, 
+        //     code->iloc_instr[i].arg1 ? code->iloc_instr[i].arg1 : "",
+        //     code->iloc_instr[i].arg2 ? code->iloc_instr[i].arg2 : "",
+        //     code->iloc_instr[i].arg3 ? code->iloc_instr[i].arg3 : "");
+        iloc_op_new(code->iloc_instr[i].mnem, arg1, arg2, arg3, type);
     }
 }
 
@@ -70,7 +127,7 @@ void free_code(iloc_code_t* code) {
     free(code->iloc_instr);
 }
 
-iloc_code_t gera_aritm(char *mnem, void *tree1, void *tree2, char* local) {
+iloc_code_t gera_aritm(char *mnem, void *tree1, void *tree2, char* local, enum op_type type) {
     // cast trees to asd_tree_t
     asd_tree_t *asd1 = (asd_tree_t *) tree1;
     asd_tree_t *asd2 = (asd_tree_t *) tree2;
@@ -83,7 +140,7 @@ iloc_code_t gera_aritm(char *mnem, void *tree1, void *tree2, char* local) {
 
     memcpy(arit_code.iloc_instr, asd1->code.iloc_instr, asd1->code.num_iloc * sizeof(iloc_t));
 
-    iloc_t new_instr = gera_iloc(mnem, asd1->temp, asd2->temp, local);
+    iloc_t new_instr = gera_iloc(mnem, asd1->temp, asd2->temp, local, type);
     inserir_iloc_code(&arit_code, &new_instr);
 
     return arit_code;

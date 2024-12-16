@@ -269,8 +269,8 @@ atribuicao
         int offset = table_entry.table_contents.offset;
         char str_offset[20];  
         int_to_string(str_offset, offset);  
-        iloc_code_t code = gera_codigo("loadI", str_offset, aux_temp, NULL); 
-        iloc_code_t code2 = gera_codigo("store", $3->temp, aux_temp, NULL);
+        iloc_code_t code = gera_codigo("loadI", str_offset, NULL, aux_temp, left); 
+        iloc_code_t code2 = gera_codigo("store", $3->temp, NULL, aux_temp, left);
         concat_code(&code, &code2);
         concat_code(&$$->code, &code);
     };
@@ -314,13 +314,13 @@ controle_fluxo
 
         $$->code = $3->code;
 
-        char *label = get_label();
+        char *label1 = get_label();
         char *label2 = get_label();
 
-        iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label, label2);
-        iloc_code_t label_code1 = gera_codigo(strcat_return(label, ":"), NULL, NULL, NULL);
-        iloc_code_t jump_code = gera_codigo("jumpI", label2, NULL, NULL);
-        iloc_code_t label_code2 = gera_codigo(strcat_return(label2, ":"), NULL, NULL, NULL);
+        iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label1, label2, cbr);
+        iloc_code_t label_code1 = gera_codigo(strcat_return(label1, ":"), NULL, NULL, NULL, label);
+        iloc_code_t jump_code = gera_codigo("jumpI", label2, NULL, NULL, jump);
+        iloc_code_t label_code2 = gera_codigo(strcat_return(label2, ":"), NULL, NULL, NULL, label);
 
         concat_code(&cond_code, &label_code1);
 
@@ -346,11 +346,11 @@ controle_fluxo
         char *label_else = get_label();
         char *label_end = get_label();
 
-        iloc_code_t code_if = gera_codigo("cbr", $3->temp, label_if_true, label_else); 
-        iloc_code_t code_label_if = gera_codigo(strcat_return(label_if_true, ":"), NULL, NULL, NULL);     
-        iloc_code_t code_jump_end = gera_codigo("jumpI", label_end, NULL, NULL);      
-        iloc_code_t code_label_else = gera_codigo(strcat_return(label_else, ":"), NULL, NULL, NULL);      
-        iloc_code_t code_label_end = gera_codigo(strcat_return(label_end, ":"), NULL, NULL, NULL);        
+        iloc_code_t code_if = gera_codigo("cbr", $3->temp, label_if_true, label_else, cbr); 
+        iloc_code_t code_label_if = gera_codigo(strcat_return(label_if_true, ":"), NULL, NULL, NULL, label);     
+        iloc_code_t code_jump_end = gera_codigo("jumpI", label_end, NULL, NULL, jump);      
+        iloc_code_t code_label_else = gera_codigo(strcat_return(label_else, ":"), NULL, NULL, NULL, label);      
+        iloc_code_t code_label_end = gera_codigo(strcat_return(label_end, ":"), NULL, NULL, NULL, label);        
 
         
         concat_code(&$$->code, &code_if);
@@ -374,15 +374,15 @@ controle_fluxo
         
         $$->code = $3->code;
 
-        char *label = get_label();
+        char *label1 = get_label();
         char *label2 = get_label();
         char *label3 = get_label();
 
-        iloc_code_t label_code = gera_codigo(strcat_return(label, ":"), NULL, NULL, NULL);
-        iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label2, label3);
-        iloc_code_t label_code2 = gera_codigo(strcat_return(label2, ":"), NULL, NULL, NULL);
-        iloc_code_t jump_code = gera_codigo("jumpI", label, NULL, NULL);
-        iloc_code_t label_code3 = gera_codigo(strcat_return(label3, ":"), NULL, NULL, NULL);
+        iloc_code_t label_code = gera_codigo(strcat_return(label1, ":"), NULL, NULL, NULL, label);
+        iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label2, label3, cbr);
+        iloc_code_t label_code2 = gera_codigo(strcat_return(label2, ":"), NULL, NULL, NULL, label);
+        iloc_code_t jump_code = gera_codigo("jumpI", label1, NULL, NULL, jump);
+        iloc_code_t label_code3 = gera_codigo(strcat_return(label3, ":"), NULL, NULL, NULL, label);
 
         concat_code(&label_code, &cond_code);
         concat_code(&label_code, &label_code2);
@@ -404,7 +404,7 @@ expressao
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("or", $1, $3, $$->temp);
+        $$->code = gera_aritm("or", $1, $3, $$->temp, left);
     }
     | expressao2 { $$ = $1; }; /* OR tem menor precedência */
 
@@ -415,7 +415,7 @@ expressao2
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("and", $1, $3, $$->temp);
+        $$->code = gera_aritm("and", $1, $3, $$->temp, left);
     }
     | expressao3 { $$ = $1; }; /* AND tem precedência maior que OR */
 
@@ -426,7 +426,7 @@ expressao3
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("cmp_EQ", $1, $3, $$->temp);
+        $$->code = gera_aritm("cmp_EQ", $1, $3, $$->temp, cmp);
         
     }  /* Comparações de igualdade e desigualdade */
     | expressao3 TK_OC_NE expressao4 { 
@@ -435,7 +435,7 @@ expressao3
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("cmp_NE", $1, $3, $$->temp);
+        $$->code = gera_aritm("cmp_NE", $1, $3, $$->temp, cmp);
         
     }
     | expressao4 { $$ = $1; };
@@ -447,7 +447,7 @@ expressao4
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type); 
         $$->temp = get_temp();
-        $$->code = gera_aritm("cmp_GT", $1, $3, $$->temp);
+        $$->code = gera_aritm("cmp_GT", $1, $3, $$->temp, cmp);
         
     }       /* Comparações de maior e menor */
     | expressao4 '>' expressao5 { 
@@ -456,7 +456,7 @@ expressao4
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("cmp_GT", $1, $3, $$->temp);
+        $$->code = gera_aritm("cmp_GT", $1, $3, $$->temp, cmp);
         
     }
     | expressao4 TK_OC_LE expressao5 { 
@@ -465,7 +465,7 @@ expressao4
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("cmp_LE", $1, $3, $$->temp);
+        $$->code = gera_aritm("cmp_LE", $1, $3, $$->temp, cmp);
         
     }
     | expressao4 TK_OC_GE expressao5 { 
@@ -474,7 +474,7 @@ expressao4
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("cmp_GE", $1, $3, $$->temp);
+        $$->code = gera_aritm("cmp_GE", $1, $3, $$->temp, cmp);
         
     }
     | expressao5 { $$ = $1; };
@@ -486,7 +486,7 @@ expressao5
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("add", $1, $3, $$->temp);
+        $$->code = gera_aritm("add", $1, $3, $$->temp, left);
         
     }        /* Soma e subtração, associatividade à esquerda */
     | expressao5 '-' expressao6 { 
@@ -495,7 +495,7 @@ expressao5
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("sub", $1, $3, $$->temp);
+        $$->code = gera_aritm("sub", $1, $3, $$->temp, left);
         
         
     }
@@ -508,7 +508,7 @@ expressao6
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("mult", $1, $3, $$->temp);
+        $$->code = gera_aritm("mult", $1, $3, $$->temp, left);
     } 
     | expressao6 '/' expressao7 { 
         $$ = asd_new("/"); 
@@ -516,7 +516,7 @@ expressao6
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type);
         $$->temp = get_temp();
-        $$->code = gera_aritm("div", $1, $3, $$->temp);
+        $$->code = gera_aritm("div", $1, $3, $$->temp, left);
         
     }
     | expressao6 '%' expressao7 { 
@@ -534,7 +534,7 @@ expressao7
         asd_add_child($$, $2); 
         $$->temp = get_temp();
         $$->type = $2->type;
-        iloc_t instr = gera_iloc("multI", $2->temp, "-1", $$->temp);
+        iloc_t instr = gera_iloc("multI", $2->temp, "-1", $$->temp, left);
         inserir_iloc_code(&$2->code, &instr);
         $$->code = $2->code;
         
@@ -548,13 +548,13 @@ expressao7
         concat_code(&$$->code, &$2->code);
         // load expression into register
         char *intermed_reg = get_temp();
-        iloc_code_t load_code = gera_codigo("load", $2->temp, intermed_reg, NULL);
+        iloc_code_t load_code = gera_codigo("load", $2->temp, NULL, intermed_reg, left);
         // load 0xFFFFFFFF into register
         char *intermed_reg2 = get_temp();
-        iloc_code_t loadI_code = gera_codigo("loadI", "0xFFFFFFFF", intermed_reg2, NULL);
+        iloc_code_t loadI_code = gera_codigo("loadI", "0xFFFFFFFF", NULL, intermed_reg2, left);
         // perform xor with both and save in register
         $$->temp = get_temp();
-        iloc_code_t xor_code = gera_codigo("xor", intermed_reg, intermed_reg2, $$->temp);
+        iloc_code_t xor_code = gera_codigo("xor", intermed_reg, intermed_reg2, $$->temp, left);
         concat_code(&load_code, &loadI_code);
         concat_code(&load_code, &xor_code);
         concat_code(&$$->code, &load_code);
@@ -585,15 +585,15 @@ operando
         char str_offset[20];  
         int_to_string(str_offset, offset);  
         
-        iloc_code_t code = gera_codigo("loadI", str_offset, aux_temp, NULL); 
+        iloc_code_t code = gera_codigo("loadI", str_offset, NULL, aux_temp, left); 
         $$->temp = get_temp(); 
-        iloc_code_t code2 = gera_codigo("load", aux_temp, $$->temp, NULL);
+        iloc_code_t code2 = gera_codigo("load", aux_temp, NULL, $$->temp, left);
         concat_code(&code, &code2);
         $$->code = code;
     }
     | literal { 
         $$->temp = get_temp();
-        iloc_t instr = gera_iloc("loadI", $1->label, $$->temp, NULL);
+        iloc_t instr = gera_iloc("loadI", $1->label, NULL, $$->temp, left);
         inserir_iloc_code(&$$->code, &instr);
     }
     | chamada_funcao { $$ = $1; } ;
