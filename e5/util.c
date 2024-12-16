@@ -137,3 +137,19 @@ void int_to_string(char* str, int num) {
     str[len] = '\0';
 }
 
+char* strcat_return(const char* str1, const char* str2) {
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    
+    char* result = (char*)malloc((len1 + len2 + 1) * sizeof(char));
+    if (!result) {
+        fprintf(stderr, "Erro ao alocar memória.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(result, str1);
+    strcat(result, str2);
+
+    return result; 
+}
+

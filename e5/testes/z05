@@ -1,4 +1,10 @@
-f = > int{
-    int a;
-    a = 2;
+main = > int {
+
+int a <= 0;
+int b <= 0;
+
+{
+int c <= 0;
+};
+
 }

@@ -23,4 +23,6 @@ char* get_label();
 
 void int_to_string(char* str, int num);
 
+char* strcat_return(const char* str1, const char* str2);
+
 #endif 

@@ -318,9 +318,9 @@ controle_fluxo
         char *label2 = get_label();
 
         iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label, label2);
-        iloc_code_t label_code1 = gera_codigo(label, NULL, NULL, NULL);
+        iloc_code_t label_code1 = gera_codigo(strcat_return(label, ":"), NULL, NULL, NULL);
         iloc_code_t jump_code = gera_codigo("jumpI", label2, NULL, NULL);
-        iloc_code_t label_code2 = gera_codigo(label2, NULL, NULL, NULL);
+        iloc_code_t label_code2 = gera_codigo(strcat_return(label2, ":"), NULL, NULL, NULL);
 
         concat_code(&cond_code, &label_code1);
 
@@ -347,10 +347,10 @@ controle_fluxo
         char *label_end = get_label();
 
         iloc_code_t code_if = gera_codigo("cbr", $3->temp, label_if_true, label_else); 
-        iloc_code_t code_label_if = gera_codigo(label_if_true, NULL, NULL, NULL);     
+        iloc_code_t code_label_if = gera_codigo(strcat_return(label_if_true, ":"), NULL, NULL, NULL);     
         iloc_code_t code_jump_end = gera_codigo("jumpI", label_end, NULL, NULL);      
-        iloc_code_t code_label_else = gera_codigo(label_else, NULL, NULL, NULL);      
-        iloc_code_t code_label_end = gera_codigo(label_end, NULL, NULL, NULL);        
+        iloc_code_t code_label_else = gera_codigo(strcat_return(label_else, ":"), NULL, NULL, NULL);      
+        iloc_code_t code_label_end = gera_codigo(strcat_return(label_end, ":"), NULL, NULL, NULL);        
 
         
         concat_code(&$$->code, &code_if);
@@ -378,11 +378,11 @@ controle_fluxo
         char *label2 = get_label();
         char *label3 = get_label();
 
-        iloc_code_t label_code = gera_codigo(label, NULL, NULL, NULL);
+        iloc_code_t label_code = gera_codigo(strcat_return(label, ":"), NULL, NULL, NULL);
         iloc_code_t cond_code = gera_codigo("cbr", $3->temp, label2, label3);
-        iloc_code_t label_code2 = gera_codigo(label2, NULL, NULL, NULL);
+        iloc_code_t label_code2 = gera_codigo(strcat_return(label2, ":"), NULL, NULL, NULL);
         iloc_code_t jump_code = gera_codigo("jumpI", label, NULL, NULL);
-        iloc_code_t label_code3 = gera_codigo(label3, NULL, NULL, NULL);
+        iloc_code_t label_code3 = gera_codigo(strcat_return(label3, ":"), NULL, NULL, NULL);
 
         concat_code(&label_code, &cond_code);
         concat_code(&label_code, &label_code2);
