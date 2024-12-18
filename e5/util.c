@@ -2,6 +2,7 @@
 
 int register_count = 0;
 int label_count = 0;
+int variable_offset = 0;
 
 void print_error(symbol_table *table, int line_number, char *value, type_content content_type, int error_code, int previous_line) {
     const char *nature = (content_type == 0) ? "IDENTIFICADOR" : "FUNÇÃO";
@@ -42,8 +43,10 @@ type_symbol type_infer(type_symbol type1, type_symbol type2) {
 }
 
 void add_symbol_entry(symbol_table *table, char *identifier, int line_number, type_content content_type, type_symbol symbol_type, char *content) {
-    int variable_offset = table->size * 4;
     table_contents contents = {line_number, content_type, symbol_type, content, variable_offset};
+    if (content_type != FUNCTION) {
+        variable_offset += 4;
+    }
     add_entry(table, identifier, contents);
 }
 

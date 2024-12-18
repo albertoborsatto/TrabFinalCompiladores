@@ -98,18 +98,27 @@ void iloc_op_new(char* mnem, char* arg1, char* arg2, char* arg3, enum op_type ty
     }
 }
 
-void print_code(iloc_code_t* code) {
-    if (code == NULL || code->iloc_instr == NULL) {
+void print_code(void* tree) {
+
+    if (tree == NULL) {
+        return;
+    }
+
+    
+    asd_tree_t *converted_tree = (asd_tree_t *) tree;
+    iloc_code_t *cock = &converted_tree->code;
+
+    if (cock == NULL || cock->iloc_instr == NULL) {
         printf("Code is empty\n");
         return;
     }
-    for (int i = 0; i < code->num_iloc; i++) {
-        char *arg1 = code->iloc_instr[i].arg1 ? code->iloc_instr[i].arg1 : ""; 
-        char *arg2 = code->iloc_instr[i].arg2 ? code->iloc_instr[i].arg2 : "";
-        char *arg3 = code->iloc_instr[i].arg3 ? code->iloc_instr[i].arg3 : "";
-        enum op_type type = code->iloc_instr[i].type;
+    for (int i = 0; i < cock->num_iloc; i++) {
+        char *arg1 = cock->iloc_instr[i].arg1 ? cock->iloc_instr[i].arg1 : ""; 
+        char *arg2 = cock->iloc_instr[i].arg2 ? cock->iloc_instr[i].arg2 : "";
+        char *arg3 = cock->iloc_instr[i].arg3 ? cock->iloc_instr[i].arg3 : "";
+        enum op_type type = cock->iloc_instr[i].type;
         
-        iloc_op_new(code->iloc_instr[i].mnem, arg1, arg2, arg3, type);
+        iloc_op_new(cock->iloc_instr[i].mnem, arg1, arg2, arg3, type);
     }
 }
 

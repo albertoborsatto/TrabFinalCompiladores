@@ -36,7 +36,7 @@ iloc_t gera_iloc(char *mnem, char* arg1, char* arg2, char* arg3, enum op_type ty
 
 void inserir_iloc_code(iloc_code_t* code, iloc_t* iloc);
 
-void print_code(iloc_code_t* code);
+void print_code(void* code);
 
 void free_code(iloc_code_t* code);
 

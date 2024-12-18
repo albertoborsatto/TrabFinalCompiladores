@@ -12,25 +12,12 @@ table_stack *stack = NULL;
 void exporta (void *arvore);
 int main (int argc, char **argv)
 {
-    int ret = yyparse(); 
-    exporta (arvore);
+    int ret = yyparse();
+    print_code(arvore); 
+    //exporta (arvore);
+
     yylex_destroy();
     return ret;
-    // gcc main.c asd.c table.c stack.c iloc.c -o main -Wall -g 
-    // iloc_code_t code = gera_codigo("loadI", "10", "r1", NULL);
-    // iloc_t instr = gera_iloc("add", "r1", "r2", "r3");
-    // inserir_iloc_code(&code, &instr);
-
-    // iloc_code_t code2 = gera_codigo("ticolinha", "10", "r1", NULL);
-
-    // concat_code(&code, &code2);
-    
-    // printf("Generated Code:\n");
-    // print_code(&code);
-
-    // free_code(&code);
-
-    // return 0;
 }
 
 void exporta(void *arvore)

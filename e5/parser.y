@@ -87,6 +87,7 @@ programa
     : cria_pilha lista_de_funcoes destroi_pilha {
         $$ = $2; 
         arvore = $$;
+
     }
     | { 
         $$ = NULL; 
@@ -125,7 +126,7 @@ fecha_escopo
 lista_de_funcoes
     : funcao lista_de_funcoes { 
         $$ = $1; 
-        asd_add_child($$, $2); 
+        asd_add_child($$, $2);
     }
     | funcao { $$ = $1; };
 
@@ -134,7 +135,8 @@ funcao
     : cabecalho_funcao corpo_funcao { 
         $$ = $1; 
         if ($2 != NULL) 
-            asd_add_child($$, $2); 
+            asd_add_child($$, $2);
+        $$->code = $2->code;
         
     };
 
@@ -167,7 +169,7 @@ param
 
 // corpo
 corpo_funcao
-    : '{' bloco_comando '}' fecha_escopo { $$ = $2; print_code(&$2->code); }
+    : '{' bloco_comando '}' fecha_escopo { $$ = $2; }
     | '{' '}' fecha_escopo { $$ = NULL; };
 
 escopo
@@ -264,13 +266,14 @@ atribuicao
 
         $$->code = $3->code;
         char *aux_temp = get_temp(); 
-        symbol_table_entry table_entry = get_table_entry(current_table, $1->value);
+        symbol_table variable_table = search_stack_table(&stack, $1->value);
+        symbol_table_entry table_entry = get_table_entry(&variable_table, $1->value);
         $$->type = table_entry.table_contents.symbol_type; 
         int offset = table_entry.table_contents.offset;
         char str_offset[20];  
         int_to_string(str_offset, offset);  
         iloc_code_t code = gera_codigo("loadI", str_offset, NULL, aux_temp, left); 
-        iloc_code_t code2 = gera_codigo("store", $3->temp, NULL, aux_temp, left);
+        iloc_code_t code2 = gera_codigo("storeAO", $3->temp, aux_temp, "rfp", right);
         concat_code(&code, &code2);
         concat_code(&$$->code, &code);
     };
@@ -446,7 +449,7 @@ expressao4
         asd_add_child($$, $3); 
         $$->type = type_infer($1->type, $3->type); 
         $$->temp = get_temp();
-        $$->code = gera_aritm("cmp_GT", $1, $3, $$->temp, cmp);
+        $$->code = gera_aritm("cmp_LT", $1, $3, $$->temp, cmp);
         
     }       /* Comparações de maior e menor */
     | expressao4 '>' expressao5 { 
@@ -577,16 +580,18 @@ operando
             check_symbol_content_type(stack, current_table, $1->value, $1->line_number, ID, previous_line, ERR_FUNCTION, $$);
         }
 
+
         char *aux_temp = get_temp(); 
-        symbol_table_entry table_entry = get_table_entry(current_table, $1->value);
+        symbol_table variable_table = search_stack_table(&stack, $1->value);
+        symbol_table_entry table_entry = get_table_entry(&variable_table, $1->value);
         $$->type = table_entry.table_contents.symbol_type; 
         int offset = table_entry.table_contents.offset;
         char str_offset[20];  
-        int_to_string(str_offset, offset);  
+        int_to_string(str_offset, offset);
         
         iloc_code_t code = gera_codigo("loadI", str_offset, NULL, aux_temp, left); 
         $$->temp = get_temp(); 
-        iloc_code_t code2 = gera_codigo("load", aux_temp, NULL, $$->temp, left);
+        iloc_code_t code2 = gera_codigo("loadAO", aux_temp, "rfp", $$->temp, left);
         concat_code(&code, &code2);
         $$->code = code;
     }

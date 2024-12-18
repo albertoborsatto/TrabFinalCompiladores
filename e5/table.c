@@ -32,6 +32,7 @@ void print_table_entry(symbol_table *table, int index) {
     } else {
         printf("Entry %d:\n", index);
         printf("\tValue: %s\n", table->entries[index].value);
+        printf("\tOfsset: %d\n", table->entries[index].table_contents.offset);
     }
     return;
 }
@@ -60,6 +61,7 @@ void print_table(symbol_table *table) {
         printf("\t Type Content: %s |", content_type);
         printf("\t Symbol Type: %s |", symbol_type);
         printf("\t Content: %s\n ", entry.table_contents.content);
+        printf("\t Offset: %d\n", entry.table_contents.offset);
     }
 }
 

@@ -1,25 +1,29 @@
-f = > int{
-    int j;
-
-    j = 12;
-
-    while (10 == 10) {
-        int a;
-        int b;
-
-        a = 10 / 10;
-        b = !a;
+main = > int
+{
+    int a;
+    int b;
+    int d;
+    int e;
+    e = 0;
+    d = 0;
+    a = 1;
+    b = 10;
+    
+    while (a < b)
+    {
+        int c;
+        c = a - b / 2;
+        if (1) // a - b / 2 > 0
+        {
+            d = d + 1;
+            a = a + 3;
+        } else {
+            a = a + 1;
+            e = e + 1;
+        };
     };
 
-    int c, a;
+    b = 42;
 
-    if (c >= a) {
-        int d;
-
-        d = 12 * 10;
-    } else {
-        int d;
-
-        d = 10 * 12;
-    };
+    return 0;
 }
